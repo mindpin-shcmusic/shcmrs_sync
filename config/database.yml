@@ -1,0 +1,29 @@
+development:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: SHCMRS_sync_development
+  pool: 5
+  username: root
+  password: root
+  socket: /tmp/mysql.sock
+
+test:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: SHCMRS_sync_test
+  pool: 5
+  username: root
+  password: root
+  socket: /tmp/mysql.sock
+
+production:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: SHCMRS_sync_production
+  pool: 5
+  username: root
+  password: root
+  socket: /tmp/mysql.sock
