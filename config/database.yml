@@ -1,29 +1,17 @@
+# 实际开发的时候，database配置务必修改一下
+
 development:
   adapter: mysql2
   encoding: utf8
-  reconnect: false
-  database: SHCMRS_sync_development
-  pool: 5
+  database: pin-app-prototype
   username: root
   password: root
-  socket: /tmp/mysql.sock
+  host: localhost
 
 test:
   adapter: mysql2
   encoding: utf8
-  reconnect: false
-  database: SHCMRS_sync_test
-  pool: 5
+  database: pin-app-prototype
   username: root
   password: root
-  socket: /tmp/mysql.sock
-
-production:
-  adapter: mysql2
-  encoding: utf8
-  reconnect: false
-  database: SHCMRS_sync_production
-  pool: 5
-  username: root
-  password: root
-  socket: /tmp/mysql.sock
+  host: localhost

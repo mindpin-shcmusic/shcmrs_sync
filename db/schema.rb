@@ -11,38 +11,59 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120702095030) do
-
-  create_table "enclosings", :force => true do |t|
-    t.integer "parent_folder_id"
-    t.integer "file_folder_id"
-  end
+ActiveRecord::Schema.define(:version => 20120703020249) do
 
   create_table "file_entities", :force => true do |t|
-    t.string   "attachment_file_name"
-    t.string   "attachment_content_type"
-    t.string   "attachment_file_size"
-    t.string   "attachment_updated_at"
+    t.string   "attach_file_name"
+    t.string   "attach_content_type"
+    t.integer  "attach_file_size"
+    t.datetime "attach_updated_at"
     t.string   "original_file_name"
-    t.integer  "media_file_id"
+    t.integer  "media_resource_id"
     t.string   "md5"
-    t.boolean  "merged",                  :default => false
-    t.datetime "created_at",                                 :null => false
-    t.datetime "updated_at",                                 :null => false
+    t.boolean  "merged"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  create_table "media_files", :force => true do |t|
-    t.integer  "file_entity_id"
-    t.integer  "media_folder_id", :default => 0
-    t.datetime "created_at",                     :null => false
-    t.datetime "updated_at",                     :null => false
-  end
-
-  create_table "media_folders", :force => true do |t|
+  create_table "media_resources", :force => true do |t|
     t.string   "name"
-    t.integer  "media_folder_id", :default => 0
-    t.datetime "created_at",                     :null => false
-    t.datetime "updated_at",                     :null => false
+    t.boolean  "is_dir"
+    t.integer  "dir_id"
+    t.integer  "creator_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "online_records", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "key"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "online_records", ["key"], :name => "index_online_records_on_key"
+  add_index "online_records", ["user_id"], :name => "index_online_records_on_user_id"
+
+  create_table "users", :force => true do |t|
+    t.string   "name",                      :default => "", :null => false
+    t.string   "hashed_password",           :default => "", :null => false
+    t.string   "salt",                      :default => "", :null => false
+    t.string   "email",                     :default => "", :null => false
+    t.string   "sign"
+    t.string   "activation_code"
+    t.string   "logo_file_name"
+    t.string   "logo_content_type"
+    t.integer  "logo_file_size"
+    t.datetime "logo_updated_at"
+    t.datetime "activated_at"
+    t.string   "reset_password_code"
+    t.datetime "reset_password_code_until"
+    t.datetime "last_login_time"
+    t.boolean  "send_invite_email"
+    t.integer  "reputation",                :default => 0,  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
 end

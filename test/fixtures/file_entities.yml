@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  attach_file_name: MyString
+  attach_content_type: MyString
+  attach_file_size: 1
+  attach_updated_at: 2012-07-03 09:58:34
+  original_file_name: MyString
+  md5: MyString
+  merged: false
+
+two:
+  attach_file_name: MyString
+  attach_content_type: MyString
+  attach_file_size: 1
+  attach_updated_at: 2012-07-03 09:58:34
+  original_file_name: MyString
+  md5: MyString
+  merged: false

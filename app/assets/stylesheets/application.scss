@@ -1,0 +1,356 @@
+@import 'reset';
+@import 'typography';
+
+@mixin gradient($from, $to){
+  background:-moz-linear-gradient(-90deg,$from,$to);
+  background:-webkit-gradient(linear,0% 0,0% 100%,from($from),to($to));
+}
+
+@mixin border-radius($radius) {
+     -moz-border-radius : $radius;
+  -webkit-border-radius : $radius;
+          border-radius : $radius;
+}
+
+@mixin transition($params){
+     -moz-transition : $params;
+  -webkit-transition : $params;
+          transition : $params;
+}
+
+// -----------------------------------------------
+
+body{
+  padding:0;margin:0;
+  background-color:#fff;
+  font-size:12px;
+  color:#404040;
+
+  .page-header{
+    @include gradient(#1C8FDF, #1C86D1);
+    box-shadow:0 0 5px black inset;
+    $h:60px;
+    height:$h;line-height:$h;
+    .title{
+      color:white;
+      font-size:16px;
+      font-weight:bold;
+      padding:0 40px;
+      text-shadow:1px 1px 2px black;
+    }
+  }
+  
+  .page-content{
+    width:960px;
+    margin:20px 40px;
+    table{
+      border-spacing:0;
+      border-collapse:collapse;
+      margin:0 0 20px 0;
+      thead{
+        background-color:#EFEFEF;
+        th{
+          border:solid 1px #ccc;
+          padding:6px;
+          color:#666;
+        }
+      }
+      tbody{
+        background-color:#fff;
+        td{
+          border:solid 1px #ccc;
+          padding:6px 10px;
+          &.running{
+            background-color:#F5FFD6;
+            color:#657F12;
+          }
+          &.closed{
+            background-color:#FFE0D6;
+            color:#C7441C;
+          }
+        }
+      }
+    }
+  }
+  
+  a{
+    color:#006699;
+    &:hover{
+      color:#993300;
+    };
+  }
+}
+
+///////////////////
+// 登录验证
+
+.page-login{
+  form{
+    .field{
+      margin-bottom:10px;
+      overflow:hidden;
+      label{
+        display:block;line-height:20px;height:20px;margin-bottom:5px;
+        &.need{
+          &::after{
+            content:"*";
+            color:red;
+            padding-left:5px;
+          };
+        }
+      }
+      input[type=text], input[type=password]{
+        border:solid #CCCCCC 1px;
+        @include border-radius(2px);
+        box-shadow:0 1px 2px rgba(0, 0, 0, 0.1) inset;
+        font-size:12px;line-height:30px;padding:0 4px;
+        width:200px;height:30px;
+        &:focus{
+          box-shadow:0 1px 2px rgba(0, 0, 0, 0.1) inset, 0 0 8px rgba(82, 168, 236, 0.6);
+          border:solid 1px rgba(82, 168, 236, 0.8);
+        }
+      }
+      
+      a.form-submit-button{
+        @include border-radius(2px);
+        @include gradient(#dd4b39, #c53727);
+        border:1px solid #b0281a;
+        color:white;
+        height:24px;line-height:24px;
+        padding:0 10px;
+        display:block;float:left;
+          
+        &:hover{
+          color:white;
+          @include gradient(darken(#dd4b39, 3%), darken(#c53727, 3%));
+          border-color:darken(#b0281a, 6%);
+          text-decoration:none;
+        };
+      }
+      
+    }
+  }
+}
+
+.page-signup{
+  @extend .page-login;
+}
+
+.page-auth-intro{
+  margin:20px 0;
+  .p{
+    padding-bottom:10px;
+    margin-bottom:10px;
+    border-bottom:solid 1px #eee;
+  }
+}
+
+.page-to-votes{
+  margin-bottom:10px;
+}
+
+///////////////////////////////////////////
+
+.page-votes{
+  ul{
+    margin-bottom:20px;
+    margin-left:-10px;
+    li.vote{
+      background-color:#F8FCFE;
+      border:solid 1px #EBF5FC;
+      padding:10px;
+      margin-bottom:3px;
+      font-size:14px;
+      overflow:hidden;
+      
+      .title{
+        float:left;
+        width:300px;
+      }
+      .see-result{
+        float:right;
+      }
+      
+      @include transition(background-color ease-in .2s);
+      &:hover{
+        background-color:white;
+      }
+    }
+  }
+  
+  a.create{
+    @include border-radius(2px);
+    @include gradient(#4BA614, #008C00);
+    border:1px solid #318706;
+    color:white;
+    height:30px;line-height:30px;
+    padding:0 10px;
+    display:block;float:left;
+      
+    &:hover{
+      color:white;
+      @include gradient(darken(#4BA614, 3%), darken(#008C00, 3%));
+      border-color:darken(#318706, 6%);
+      text-decoration:none;
+    };
+  }
+}
+
+.page-go-back{
+  padding-bottom:10px;
+  margin-bottom:10px;
+  border-bottom:solid 1px #ccc;
+}
+
+.page-vote-show{
+  .title{
+    font-size:14px;font-weight:bold;
+    margin-bottom:10px;
+  }
+  
+  .items{
+    margin-bottom:10px;
+    .item{
+      height:32px;line-height:32px;
+      font-size:14px;
+      border-bottom:dashed 1px #ddd;
+    }
+  }
+  
+  form{
+    a.form-submit-button{
+      @include border-radius(2px);
+      @include gradient(#dd4b39, #c53727);
+      border:1px solid #b0281a;
+      color:white;
+      height:24px;line-height:24px;
+      padding:0 10px;
+      display:block;float:left;
+        
+      &:hover{
+        color:white;
+        @include gradient(darken(#dd4b39, 3%), darken(#c53727, 3%));
+        border-color:darken(#b0281a, 6%);
+        text-decoration:none;
+      };
+    }
+  }
+}
+
+.page-vote-result{
+  .title{
+    font-size:14px;font-weight:bold;
+    margin-bottom:10px;
+  }
+  
+  .items{
+    margin-bottom:10px;
+    .item{
+      height:32px;line-height:32px;
+      font-size:14px;
+      border-bottom:dashed 1px #ddd;
+      overflow:hidden;
+      
+      .t{float:left;width:400px;}
+      .line{
+        float:left;
+        width:200px;height:20px;margin-top:6px;margin-right:10px;
+        .p{
+          @include border-radius(2px);
+          background-color:#FC2929;
+          height:20px;
+        }
+      }
+      .r{float:left;color:#666;}
+    }
+  }
+  
+  .ops{
+    a.go-on{
+      @include border-radius(2px);
+      @include gradient(#eee, #ddd);
+      border:1px solid #ccc;
+      color:#444;
+      height:24px;line-height:24px;
+      padding:0 10px;
+      display:block;float:left;
+        
+      &:hover{
+        color:#444;
+        @include gradient(darken(#eee, 3%), darken(#ddd, 3%));
+        border-color:darken(#ccc, 10%);
+        text-decoration:none;
+      };
+    }
+  }
+}
+
+.page-new-vote{
+  form{
+    .field{
+      margin-bottom:10px;
+      label{
+        display:block;line-height:20px;height:20px;margin-bottom:5px;
+        &.need{
+          &::after{
+            content:"*";
+            color:red;
+            padding-left:5px;
+          };
+        }
+      }
+      input[type=text]{
+        border:solid #CCCCCC 1px;
+        @include border-radius(2px);
+        box-shadow:0 1px 2px rgba(0, 0, 0, 0.1) inset;
+        font-size:12px;line-height:30px;padding:0 4px;
+        width:400px;height:30px;
+        &:focus{
+          box-shadow:0 1px 2px rgba(0, 0, 0, 0.1) inset, 0 0 8px rgba(82, 168, 236, 0.6);
+          border:solid 1px rgba(82, 168, 236, 0.8);
+        }
+      }
+      
+      .item-list{
+        .item{
+          overflow:hidden;
+          input[type=text]{
+            border:solid #CCCCCC 1px;
+            @include border-radius(2px);
+            box-shadow:0 1px 2px rgba(0, 0, 0, 0.1) inset;
+            font-size:12px;line-height:30px;padding:0 4px;
+            width:300px;height:30px;
+            margin-bottom:10px;
+            float:left;margin-right:10px;
+          }
+          a.delete{
+            float:left;height:32px;line-height:32px;
+          }
+        }
+        &.min{
+          a.delete{display:none;}
+        }
+      }
+      
+      select{
+      }
+      
+      a.form-submit-button{
+        @include border-radius(2px);
+        @include gradient(#dd4b39, #c53727);
+        border:1px solid #b0281a;
+        color:white;
+        height:24px;line-height:24px;
+        padding:0 10px;
+        display:block;float:left;
+          
+        &:hover{
+          color:white;
+          @include gradient(darken(#dd4b39, 3%), darken(#c53727, 3%));
+          border-color:darken(#b0281a, 6%);
+          text-decoration:none;
+        };
+      }
+    }
+  }
+}

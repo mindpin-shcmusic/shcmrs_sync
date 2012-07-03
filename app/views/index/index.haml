@@ -1,0 +1,18 @@
+.page-welcome.bold 欢迎你，#{current_user.name}
+
+.page-auth-intro
+  .title 关于如何在开发中使用用户验证的说明
+  .p
+    在 View 和 Controller 层，可以使用以下方法
+  .p
+    .bold current_user
+    获得当前登录的用户对象。如果没有登录，则返回 nil
+  .p
+    .bold logged_in?
+    判断当前是否是登录状态
+
+.page-to-votes
+  =link_to '去投票列表','/votes'
+
+.page-to-logout
+  =link_to "退出登录","/logout"

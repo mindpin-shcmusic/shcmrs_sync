@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  name: 1
+  is_dir: false
+  dir_id: 1
+  creator_id: 1
+
+two:
+  name: 1
+  is_dir: false
+  dir_id: 1
+  creator_id: 1

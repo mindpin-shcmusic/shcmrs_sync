@@ -1,0 +1,26 @@
+-# MINDPIN 工程原型Layout
+
+:ruby
+  tstr = ((yield :title) || '').gsub("\n",'')
+  title = tstr.blank? ? 'MINDPIN - 开发原型工程' : "#{tstr} - MINDPIN - 开发原型工程"
+
+!!! 5
+%html{:lang=>'zh'}
+  %head
+    %meta{:charset=>'utf-8'}
+    %title=title
+    = csrf_meta_tags
+    = stylesheet_link_tag 'application'
+    = yield :css
+    = yield :head
+
+  %body.echo.gray
+    .page-wrap
+      .page-container
+        .page-header
+          .title=title
+        .page-content
+          = yield
+
+    = javascript_include_tag 'application'
+    = yield :javascript

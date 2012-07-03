@@ -4,4 +4,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-SHCMRSSync::Application.load_tasks
+Voteapp::Application.load_tasks

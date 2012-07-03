@@ -4,4 +4,4 @@
 # If you change this key, all old signed cookies will become invalid!
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
-SHCMRSSync::Application.config.secret_token = '49e571d7466104a58d9a35107fee9c6e9f4c052539bf86b9fd931fcf8a6712eabf0970110021e312a7c9b3def65a87bbc2251a0b03b315a08950543ac3e74dd5'
+Voteapp::Application.config.secret_token = 'f8fa3c683196c6ae42b29398fcbf5ca864c40fe89928135c6454a0d82caedba4ab6fc70508cb6e1e84c63c77b1e7efba08ab85ae88acd3d71c926e90261b42e3'
