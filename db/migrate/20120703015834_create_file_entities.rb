@@ -8,7 +8,8 @@ class CreateFileEntities < ActiveRecord::Migration
       t.string   :original_file_name
       t.integer  :media_resource_id
       t.string   :md5
-      t.boolean  :merged
+      t.boolean  :merged,
+                 :default => false
 
       t.timestamps
     end

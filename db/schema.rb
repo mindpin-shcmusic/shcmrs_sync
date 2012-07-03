@@ -21,15 +21,15 @@ ActiveRecord::Schema.define(:version => 20120703020249) do
     t.string   "original_file_name"
     t.integer  "media_resource_id"
     t.string   "md5"
-    t.boolean  "merged"
+    t.boolean  "merged",              :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "media_resources", :force => true do |t|
     t.string   "name"
-    t.boolean  "is_dir"
-    t.integer  "dir_id"
+    t.boolean  "is_dir",     :default => false
+    t.integer  "dir_id",     :default => 0
     t.integer  "creator_id"
     t.datetime "created_at"
     t.datetime "updated_at"
