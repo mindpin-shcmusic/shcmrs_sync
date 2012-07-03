@@ -44,26 +44,39 @@ class MediaResource < ActiveRecord::Base
 
   def path resource = self, input_array = []
     path_ary = input_array
+
     if resource.dir_id == 0
       return path_ary.map {|r| r.name}.join('/').insert(0, '/')
     end
+
     parent = MediaResource.find(resource.dir_id)
 
     path_ary.unshift parent
-    path parent, path_ary
+
+    path parent,
+         path_ary
   end
 
-  protected
+  private
 
   def file_metadata
     {
-      :bytes    => latest_attach.size,
-      :rev      => Utils.randstr(8),
-      :modified => updated_at,
-      :path     => path 
+      :bytes     => latest_attach.size,
+      :rev       => Utils.randstr(8),
+      :modified  => updated_at,
+      :path      => path,
+      :mime_type => latest_attach.content_type,
+      :is_dir    => is_dir
+
     }
   end
 
   def dir_metadata
+    {
+      :bytes    => '0',
+      :path     => path,
+      :is_dir   => is_dir,
+      :contents => media_resources.map {|r| r.metadata}
+    }
   end
 end

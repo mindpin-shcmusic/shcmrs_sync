@@ -11,7 +11,7 @@ class MediaResourcesController < ApplicationController
       end
       send_file @resource.file_entities.first.attach.path
     when nil
-      render :text => '请求的文件资源不存在', :status => 404
+      render :text => '请求的文件资源不存在', :status => 404 # 
     end
   end
 
@@ -20,8 +20,12 @@ class MediaResourcesController < ApplicationController
     
     @resource = MediaResource.create_by_path path
     file = @resource.file_entities.new :attach => params[:file]
-    file.save
 
-    render :text => path
+    case file.save
+    when true
+      render :json => @resource.metadata.to_json
+    when false
+      render :json => {:error => 'oh no!'}.to_json
+    end
   end
 end
