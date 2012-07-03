@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120703020249) do
+ActiveRecord::Schema.define(:version => 20120703154545) do
 
   create_table "file_entities", :force => true do |t|
     t.string   "attach_file_name"
@@ -19,21 +18,28 @@ ActiveRecord::Schema.define(:version => 20120703020249) do
     t.integer  "attach_file_size"
     t.datetime "attach_updated_at"
     t.string   "original_file_name"
-    t.integer  "media_resource_id"
     t.string   "md5"
     t.boolean  "merged",              :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "file_entities", ["md5"], :name => "index_file_entities_on_md5"
+
   create_table "media_resources", :force => true do |t|
+    t.integer  "file_entity_id"
     t.string   "name"
-    t.boolean  "is_dir",     :default => false
-    t.integer  "dir_id",     :default => 0
+    t.boolean  "is_dir",         :default => false
+    t.integer  "dir_id",         :default => 0
     t.integer  "creator_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "media_resources", ["creator_id"], :name => "index_media_resources_on_creator_id"
+  add_index "media_resources", ["dir_id"], :name => "index_media_resources_on_dir_id"
+  add_index "media_resources", ["file_entity_id"], :name => "index_media_resources_on_file_entity_id"
+  add_index "media_resources", ["name"], :name => "index_media_resources_on_name"
 
   create_table "online_records", :force => true do |t|
     t.integer  "user_id"

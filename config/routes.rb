@@ -11,7 +11,6 @@ Voteapp::Application.routes.draw do
   
   # -- 以下可以自由添加其他 routes 配置项
   
-  get '/api/file/*path'     => 'media_resources#resource'
-  get '/api/f/*path'     => 'media_resources#file'
-  put '/api/file_put/*path' => 'media_resources#put_resource'
+  get '/api/file/*path'     => 'media_resources#get_file'
+  put '/api/file_put/*path' => 'media_resources#put_file'
 end

@@ -1,4 +1,5 @@
 class FileEntity < ActiveRecord::Base
-  belongs_to :media_resource
+  has_many :media_resources
+
   has_attached_file :attach
 end

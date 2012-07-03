@@ -1,27 +1,30 @@
 # encoding: utf-8
 class MediaResourcesController < ApplicationController
-  def resource
-    path = URI.decode(request.fullpath).split('/')[3..-1]
-    @resource = MediaResource.find_by_path path
 
-    case @resource
-    when MediaResource
-      if @resource.is_dir
-        return render :text => '无法下载一个文件夹', :status => 405
-      end
-      send_file @resource.file_entities.first.attach.path
-    when nil
-      render :text => '请求的文件资源不存在', :status => 404
+  def get_file
+    resource_path = URI.decode(request.fullpath).sub('/api/file', '')
+
+    # 例如 /hello/test.txt
+    @resource = MediaResource.get_by_path resource_path
+
+    if @resource.blank?
+      return render :status => 404, :text => '请求的文件资源不存在'
     end
+
+    if @resource.is_dir
+      return render :status => 405, :text => '无法下载一个文件夹'
+    end
+
+    send_file @resource.file_entity.attach.path
   end
 
-  def put_resource
-    path = URI.decode(request.fullpath).split('/')[3..-1]
+  def put_file
+    resource_path = URI.decode(request.fullpath).sub('/api/file_put', '')
     
-    @resource = MediaResource.create_by_path path
-    file = @resource.file_entities.new :attach => params[:file]
-    file.save
+    if MediaResource.put_file_by_path resource_path, params[:file]
+      return render :text => 'OK'
+    end
 
-    render :text => path
+    return render :status => 405, :text => '创建操作失败'
   end
 end
