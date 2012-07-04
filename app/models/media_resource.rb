@@ -79,21 +79,18 @@ class MediaResource < ActiveRecord::Base
   # ------------
   # 下面的代码还没动
 
-  def metadata
-    self.is_dir ? dir_metadata : file_metadata
+  def metadata(options = {:list => true})
+    self.is_dir ? dir_metadata(options) : file_metadata
   end
 
-  def latest_entity
-    self.file_entities.order('created_at DESC').first
-  end
-
-  def latest_attach
-    latest_entity.attach
+  def attach
+    file_entity.attach
   end
 
   def path resource = self, input_array = []
     path_ary = input_array
     if resource.dir_id == 0
+      path_ary << self
       return path_ary.map {|r| r.name}.join('/').insert(0, '/')
     end
     parent = MediaResource.find(resource.dir_id)
@@ -105,23 +102,38 @@ class MediaResource < ActiveRecord::Base
   private
 
   def file_metadata
-    {
-      :bytes     => latest_attach.size,
-      :rev       => Utils.randstr(8),
+    base_metadata.merge({
+      :rev       => randstr(8),
       :modified  => updated_at,
-      :path      => path,
-      :mime_type => latest_attach.content_type,
-      :is_dir    => is_dir
-
-    }
+      :mime_type => attach.content_type
+    })
   end
 
-  def dir_metadata
+  def dir_metadata(options = {})
+    dir_id = self.dir_id
+
+    hash = base_metadata
+
+    # 如果true:
+    # 当前目录下的子目录不显示contents
+    # 如果false：
+    # 当前目录下的子目录示contents
+    hash[:contents] = media_resources.map do |r|
+      if r.is_dir
+        options[:list] ? r.metadata(:list => true) : r.send(:base_metadata)
+      else
+        r.metadata
+      end
+    end
+
+    hash
+  end
+
+  def base_metadata
     {
-      :bytes    => '0',
+      :bytes    => is_dir ? 0 : attach.size,
       :path     => path,
-      :is_dir   => is_dir,
-      :contents => media_resources.map {|r| r.metadata}
+      :is_dir   => is_dir
     }
   end
 end

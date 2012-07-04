@@ -27,4 +27,16 @@ class MediaResourcesController < ApplicationController
 
     return render :status => 405, :text => '创建操作失败'
   end
+
+  def get_metadata
+    resource_path = URI.decode(request.fullpath).sub('/api/metadata', '')
+
+    @resource = MediaResource.get_by_path resource_path
+
+    if @resource.blank?
+      return render :status => 404, :text => '请求的文件资源不存在'
+    end
+
+    return render :text => @resource.metadata(:list => false).to_json
+  end
 end
