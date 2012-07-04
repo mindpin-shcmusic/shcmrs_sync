@@ -37,7 +37,7 @@ class MediaResourcesController < ApplicationController
       return render :status => 404, :text => '请求的文件资源不存在'
     end
 
-    return render :text => @resource.metadata(:list => false).to_json
+    return render :text => @resource.metadata(:list => true).to_json
   end
 
   def get_delta

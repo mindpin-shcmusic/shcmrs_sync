@@ -138,15 +138,9 @@ class MediaResource < ActiveRecord::Base
 
     hash = base_metadata
 
-    # 如果false:
-    # 当前目录下的子目录不显示contents
-    # 如果true:
-    # 当前目录下的子目录示contents
-    hash[:contents] = media_resources.map do |r|
-      if r.is_dir
-        options[:list] ? r.metadata(:list => true) : r.send(:base_metadata)
-      else
-        r.metadata
+    if options[:list]
+      hash[:contents] = media_resources.map do |r|
+        r.is_dir ? r.send(:base_metadata) : r.metadata
       end
     end
 
