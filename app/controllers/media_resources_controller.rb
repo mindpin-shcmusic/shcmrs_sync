@@ -39,4 +39,8 @@ class MediaResourcesController < ApplicationController
 
     return render :text => @resource.metadata(:list => false).to_json
   end
+
+  def get_delta
+    render :text => MediaResource.delta(params[:cursor]).to_json
+  end
 end

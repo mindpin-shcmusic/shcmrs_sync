@@ -13,12 +13,18 @@ class MediaResource < ActiveRecord::Base
              :foreign_key => 'dir_id',
              :conditions  => {:is_dir => true}
 
+  validates  :name,
+             :uniqueness  => {
+               :case_sensitive => false,
+               :scope          => [:is_dir, :dir_id]
+             }
+
   # 根据传入的资源路径字符串，查找一个资源对象
   # 传入的路径类似 /hello/test.txt
   # 或者 /hello/world
   # 找到的资源对象，可能是一个文件资源，也可能是一个文件夹资源
   def self.get_by_path(resource_path)
-    names = resource_path.sub('/', '').split('/')
+    names = get_names_from_path resource_path
 
     collect = MediaResource
     resource = nil
@@ -36,7 +42,7 @@ class MediaResource < ActiveRecord::Base
   # 传入的路径类似 /hello/test.txt
   # 创建文件资源的过程中，关联创建文件夹资源
   def self.put_file_by_path(resource_path, file)
-    file_name = resource_path.sub('/', '').split('/')[-1]
+    file_name = get_names_from_path(resource_path)[-1]
 
     # 传入的是 北极熊/企鹅/西瓜.jpg
     # 则
@@ -59,7 +65,7 @@ class MediaResource < ActiveRecord::Base
 
   # 逐层创建文件夹资源（如果不存在），并返回最后一个文件夹资源 或者 MediaResource 类对象
   def self._mkdirs(resource_path)
-    dir_names = resource_path.sub('/', '').split('/')[0...-1]
+    dir_names = get_names_from_path(resource_path)[0...-1]
 
     # 传入的是 北极熊/企鹅/西瓜.jpg
     # 则
@@ -99,7 +105,25 @@ class MediaResource < ActiveRecord::Base
     path parent, path_ary
   end
 
+
+  def self.delta(cursor = 0, limit = 100)
+    delta = self.where('id > ?', cursor).limit(limit)
+    entries = delta.map {|r| [r.path, r.metadata(:list => false)]}
+    has_more = self.last.id > delta.last.id
+
+    {
+      :entries  => entries,
+      :reset    => false,
+      :cursor   => delta.last.id,
+      :has_more => has_more
+    }
+  end
+
   private
+
+  def self.get_names_from_path path 
+    path.sub('/', '').split('/')
+  end
 
   def file_metadata
     base_metadata.merge({

@@ -14,4 +14,5 @@ Voteapp::Application.routes.draw do
   get '/api/file/*path'     => 'media_resources#get_file'
   put '/api/file_put/*path' => 'media_resources#put_file'
   get '/api/metadata/*path' => 'media_resources#get_metadata'
+  get '/api/delta/:cursor'  => 'media_resources#get_delta'
 end
