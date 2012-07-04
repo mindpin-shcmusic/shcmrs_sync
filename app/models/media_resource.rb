@@ -50,7 +50,7 @@ class MediaResource < ActiveRecord::Base
 
 
 
-    collect = self._mkdirs(resource_path)
+    collect = self._mkdirs(resource_path, :with_file_name => true)[0]
 
     resource = collect.find_or_initialize_by_name_and_is_dir(file_name, false)
 
@@ -60,39 +60,26 @@ class MediaResource < ActiveRecord::Base
     })
 
     resource.save
-
   end
 
   # 逐层创建文件夹资源（如果不存在），并返回最后一个文件夹资源 或者 MediaResource 类对象
-  def self._mkdirs(resource_path)
-    dir_names = get_names_from_path(resource_path)[0...-1]
-
-    # 传入的是 北极熊/企鹅/西瓜.jpg
-    # 则
-    # dir_names: ["北极熊", "企鹅"]
-
-    # 逐层地创建目录资源
-    collect = MediaResource
-
-    dir_names.each {|dir_name|
-      dir_resource = collect.find_or_create_by_name_and_is_dir(dir_name, true)
-      collect = dir_resource.media_resources
-    }
-
-    return collect
-  end
-
   def self.create_folder_from_path(resource_path)
-    dir_names = get_names_from_path(resource_path)
-    dir_resource = nil
-    collect = MediaResource
-
-    dir_names.each {|dir_name|
-      dir_resource = collect.find_or_create_by_name_and_is_dir(dir_name, true)
-      collect = dir_resource.media_resources
-    }
+    dir_resource = _mkdirs(resource_path)[1]
 
     return dir_resource
+  end
+
+  def self._mkdirs(resource_path,
+                   options = {:with_file_name => false})
+
+    dir_names = get_names_from_path(resource_path)
+
+    dir_names.pop if options[:with_file_name]
+
+    return dir_names.reduce([MediaResource]) {|memo, dir_name|
+      dir = memo[0].find_or_create_by_name_and_is_dir(dir_name, true)
+      [dir.media_resources, dir]
+    }
   end
 
   # ------------
