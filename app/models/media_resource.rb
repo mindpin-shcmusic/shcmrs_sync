@@ -102,17 +102,26 @@ class MediaResource < ActiveRecord::Base
     path parent, path_ary
   end
 
-  protected
+  private
 
   def file_metadata
     {
-      :bytes    => latest_attach.size,
-      :rev      => randstr(8),
-      :modified => updated_at,
-      :path     => path 
+      :bytes     => latest_attach.size,
+      :rev       => Utils.randstr(8),
+      :modified  => updated_at,
+      :path      => path,
+      :mime_type => latest_attach.content_type,
+      :is_dir    => is_dir
+
     }
   end
 
   def dir_metadata
+    {
+      :bytes    => '0',
+      :path     => path,
+      :is_dir   => is_dir,
+      :contents => media_resources.map {|r| r.metadata}
+    }
   end
 end
