@@ -82,6 +82,19 @@ class MediaResource < ActiveRecord::Base
     return collect
   end
 
+  def self.create_folder_from_path(resource_path)
+    dir_names = get_names_from_path(resource_path)
+    dir_resource = nil
+    collect = MediaResource
+
+    dir_names.each {|dir_name|
+      dir_resource = collect.find_or_create_by_name_and_is_dir(dir_name, true)
+      collect = dir_resource.media_resources
+    }
+
+    return dir_resource
+  end
+
   # ------------
   # 下面的代码还没动
 
@@ -109,12 +122,12 @@ class MediaResource < ActiveRecord::Base
   def self.delta(cursor = 0, limit = 100)
     delta = self.where('id > ?', cursor).limit(limit)
     entries = delta.map {|r| [r.path, r.metadata(:list => false)]}
-    has_more = self.last.id > delta.last.id
+    has_more = !delta.blank? && (self.last.id > delta.last.id)
 
     {
       :entries  => entries,
       :reset    => false,
-      :cursor   => delta.last.id,
+      :cursor   => delta.last && delta.last.id,
       :has_more => has_more
     }
   end
@@ -138,9 +151,9 @@ class MediaResource < ActiveRecord::Base
 
     hash = base_metadata
 
-    # 如果true:
+    # 如果false:
     # 当前目录下的子目录不显示contents
-    # 如果false：
+    # 如果true:
     # 当前目录下的子目录示contents
     hash[:contents] = media_resources.map do |r|
       if r.is_dir
