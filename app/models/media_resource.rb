@@ -6,8 +6,7 @@ class MediaResource < ActiveRecord::Base
              :foreign_key => 'creator_id'
 
   has_many   :media_resources,
-             :foreign_key => 'dir_id',
-             :dependent   => :destroy
+             :foreign_key => 'dir_id'
 
   belongs_to :dir,
              :class_name  => 'MediaResource',
@@ -17,8 +16,29 @@ class MediaResource < ActiveRecord::Base
   validates  :name,
              :uniqueness  => {
                :case_sensitive => false,
-               :scope          => [:dir_id]
+               :scope          => :dir_id
              }
+
+  before_create :create_fileops_time
+
+  default_scope where(:is_removed => false).order('is_dir desc', 'name asc')
+  scope      :removed,
+             where(:is_removed => true)
+
+  def remove
+    self.update_attributes :is_removed   => true,
+                           :fileops_time => Time.now
+
+    self.media_resources.each {|resource|
+      resource.remove
+    } if self.is_dir
+
+    self
+  end
+
+  def web_path
+    '/file' + path
+  end
 
   # 根据传入的资源路径字符串，查找一个资源对象
   # 传入的路径类似 /hello/test.txt
@@ -51,7 +71,7 @@ class MediaResource < ActiveRecord::Base
 
 
 
-    collect = _mkdirs(resource_path, :with_file_name => true)[0]
+    collect = _mkdirs(resource_path)[0]
 
     resource = collect.find_or_initialize_by_name_and_is_dir(file_name, false)
 
@@ -70,12 +90,8 @@ class MediaResource < ActiveRecord::Base
     return dir_resource
   end
 
-  def self._mkdirs(resource_path,
-                   options = {:with_file_name => false})
-
+  def self._mkdirs(resource_path)
     dir_names = get_names_from_path(resource_path)
-
-    dir_names.pop if options[:with_file_name]
 
     return dir_names.reduce([MediaResource]) {|memo, dir_name|
       dir = memo[0].find_or_create_by_name_and_is_dir(dir_name, true)
@@ -152,5 +168,9 @@ class MediaResource < ActiveRecord::Base
       :path     => path,
       :is_dir   => is_dir
     }
+  end
+
+  def create_fileops_time
+    self.fileops_time = Time.now
   end
 end

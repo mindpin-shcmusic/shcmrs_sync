@@ -1,0 +1,14 @@
+%h2
+  = link_to '删除全部文件',
+            '/api/fileops/delete_all',
+            :method => :delete
+
+%table
+  %thead
+    %tr
+      %th 文件名
+  %tbody
+    - resources.each do |resource|
+      %tr
+        %td{:style => "background-color:#{resource.is_dir ? 'orange' : 'green'};"}
+          = link_to resource.name, resource.web_path

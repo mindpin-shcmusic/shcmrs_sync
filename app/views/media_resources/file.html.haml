@@ -1,0 +1,14 @@
+%h1
+  #{@media_resource.is_dir ? '目录名' : '文件名'}:
+  #{@media_resource.name}
+
+%h2
+  - if @media_resource.dir_id == 0
+    = link_to '返回上级目录', file_index_path
+  - else
+    = link_to '返回上级目录', @media_resource.dir.web_path
+
+- if @media_resource.is_dir
+  = render 'file_list', :resources => @media_resource.media_resources
+- else
+  = link_to '下载文件', '/api/file' + @media_resource.path
