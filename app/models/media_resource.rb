@@ -6,7 +6,8 @@ class MediaResource < ActiveRecord::Base
              :foreign_key => 'creator_id'
 
   has_many   :media_resources,
-             :foreign_key => 'dir_id'
+             :foreign_key => 'dir_id',
+             :dependent   => :destroy
 
   belongs_to :dir,
              :class_name  => 'MediaResource',
@@ -16,7 +17,7 @@ class MediaResource < ActiveRecord::Base
   validates  :name,
              :uniqueness  => {
                :case_sensitive => false,
-               :scope          => [:is_dir, :dir_id]
+               :scope          => [:dir_id]
              }
 
   # 根据传入的资源路径字符串，查找一个资源对象
@@ -50,7 +51,7 @@ class MediaResource < ActiveRecord::Base
 
 
 
-    collect = self._mkdirs(resource_path, :with_file_name => true)[0]
+    collect = _mkdirs(resource_path, :with_file_name => true)[0]
 
     resource = collect.find_or_initialize_by_name_and_is_dir(file_name, false)
 
@@ -86,29 +87,31 @@ class MediaResource < ActiveRecord::Base
   # 下面的代码还没动
 
   def metadata(options = {:list => true})
-    self.is_dir ? dir_metadata(options) : file_metadata
+    is_dir ? dir_metadata(options) : file_metadata
   end
 
   def attach
-    file_entity.attach
+    file_entity && file_entity.attach
   end
 
-  def path resource = self, input_array = []
+  def path(resource = self, input_array = [])
     path_ary = input_array
+
     if resource.dir_id == 0
-      path_ary << self
-      return path_ary.map {|r| r.name}.join('/').insert(0, '/')
+      path_ary << self.name
+      return path_ary.join('/').insert(0, '/')
     end
+
     parent = MediaResource.find(resource.dir_id)
 
-    path_ary.unshift parent
-    path parent, path_ary
+    path parent,
+         path_ary.unshift(parent.name)
   end
 
 
   def self.delta(cursor = 0, limit = 100)
-    delta = self.where('id > ?', cursor).limit(limit)
-    entries = delta.map {|r| [r.path, r.metadata(:list => false)]}
+    delta    = self.where('id > ?', cursor).limit(limit)
+    entries  = delta.map {|r| [r.path, r.metadata(:list => false)]}
     has_more = !delta.blank? && (self.last.id > delta.last.id)
 
     {
@@ -134,17 +137,13 @@ class MediaResource < ActiveRecord::Base
   end
 
   def dir_metadata(options = {})
-    dir_id = self.dir_id
+    options[:list] ?
 
-    hash = base_metadata
+    base_metadata.merge(:contents => media_resources.map {|r|
+      r.is_dir ? r.send(:base_metadata) : r.metadata
+    }) :
 
-    if options[:list]
-      hash[:contents] = media_resources.map do |r|
-        r.is_dir ? r.send(:base_metadata) : r.metadata
-      end
-    end
-
-    hash
+    base_metadata
   end
 
   def base_metadata

@@ -50,7 +50,7 @@ class MediaResourcesController < ApplicationController
 
   def create_folder
     if MediaResource.get_by_path params[:path]
-      return render :text => '指定的文件夹已经存在，不能重复创建'
+      return render :status => 403, :text => '指定的资源路径已经存在，不能重复创建'
     end
 
     render :text => MediaResource.create_folder_from_path(params[:path]).metadata.to_json
