@@ -1,13 +1,16 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.1.1'
-gem 'mysql2'
-gem 'paperclip'
+gem 'mongoid-paperclip',
+    :git     => 'https://github.com/meskyanichi/mongoid-paperclip.git',
+    :branch  => 'develop',
+    :require => 'mongoid_paperclip'
 
 gem 'execjs'
 gem 'therubyracer'
 
 gem 'haml'
+gem 'mongoid', '~> 3.0.0.rc'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.4'

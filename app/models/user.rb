@@ -1,12 +1,66 @@
 # encoding: utf-8
-class User < ActiveRecord::Base
+class User
+  include Mongoid::Document
+  include Mongoid::Timestamps
   include UserAuthMethods
-  
+
+  field     :name,
+            :type    => String,
+            :default => ''
+
+  field     :hashed_password,
+            :type    => String,
+            :default => ''
+
+  field     :salt,
+            :type    => String,
+            :default => ''
+
+  field     :email,
+            :type    => String,
+            :default => ''
+
+  field     :sign,
+            :type    => String
+
+  field     :activation_code,
+            :type    => String
+
+  field     :logo_file_name,
+            :type    => String
+
+  field     :logo_content_type,
+            :type    => String
+
+  field     :logo_file_size,
+            :type    => Integer
+
+  field     :logo_updated_at,
+            :type    => DateTime
+
+  field     :activated_at,
+            :type    => DateTime
+
+  field     :reset_password_code,
+            :type    => String
+
+  field     :reset_password_code_until,
+            :type    => DateTime
+
+  field     :last_login_time,
+            :type    => DateTime
+
+  field     :send_invite_email,
+            :type    => Boolean
+
+  field     :reputation,
+            :type    => Integer,
+            :default => 0
+
   has_one   :online_record,
             :dependent    => :destroy
-  
-  has_many  :media_resources,
-            :foreign_key  => 'creator_id'
+
+  has_many  :media_resources
 
   # 校验部分
   # 不能为空的有：用户名，登录名，电子邮箱
@@ -14,34 +68,34 @@ class User < ActiveRecord::Base
   # 两次密码输入必须一样，电子邮箱格式必须正确
   # 密码允许为空，但是如果输入了，就必须是4-32
   # 用户名：是2-20位的中文或者英文，可以混写
-  
-  validates :name, 
+
+  validates :name,
             :presence     => true,
             :length       => 2..20,
             :uniqueness   => {:case_sensitive => false},
             :format       => /^([A-Za-z0-9一-龥]+)$/
-  
+
   validates :email,
             :presence     => true,
             :uniqueness   => {:case_sensitive => false},
             :format       => /^([A-Za-z0-9_]+)([\.\-\+][A-Za-z0-9_]+)*(\@[A-Za-z0-9_]+)([\.\-][A-Za-z0-9_]+)*(\.[A-Za-z0-9_]+)$/
-  
+
   validates :password,
             :presence     => {:on => :create},
             :confirmation => true,
             :length       => {:in => 4..32}
-  
+
   def password
     @password
   end
-  
+
   # 根据传入的明文密码，创建内部密钥并计算密文密码
   def password=(pwd)
     return if pwd.blank?
-    
+
     @password = pwd
     self.salt = "#{self.object_id}#{rand}"
     self.hashed_password = self.encrypted_password(self.password)
   end
-  
+
 end

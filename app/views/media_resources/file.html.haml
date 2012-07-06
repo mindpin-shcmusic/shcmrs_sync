@@ -3,7 +3,7 @@
   #{@media_resource.name}
 
 %h2
-  - if @media_resource.dir_id == 0
+  - if @media_resource.dir_id.nil?
     = link_to '返回上级目录', file_index_path
   - else
     = link_to '返回上级目录', @media_resource.dir.web_path

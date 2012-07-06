@@ -1,7 +1,21 @@
-class FileEntity < ActiveRecord::Base
+class FileEntity
+  include Mongoid::Document
+  include Mongoid::Timestamps
+  include Mongoid::Paperclip
+
+  field  :original_file_name,
+         :type    => String
+
+  field  :md5,
+         :type    => String
+
+  field  :merged,
+         :type    => Boolean,
+         :default => false
+
   has_many :media_resources
 
-  has_attached_file :attach
+  has_mongoid_attached_file :attach
 
   def self.get_or_greate_by_file_md5(file)
     md5 = Digest::MD5.file(file).to_s

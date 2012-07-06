@@ -1,8 +1,6 @@
 class MediaResourcesController < ApplicationController
   def index
-    @media_resources = MediaResource.where(:dir_id => 0)
-
-
+    @media_resources = MediaResource.where(:dir_id.exists => false)
   end
 
   def file

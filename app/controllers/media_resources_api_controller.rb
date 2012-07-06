@@ -28,8 +28,8 @@ class MediaResourcesApiController < ApplicationController
     return render :status => 405, :text => '创建操作失败'
   end
 
-  def get_metadata
-    resource_path = URI.decode(request.fullpath).sub('/api/metadata', '')
+  def get_meta_data
+    resource_path = URI.decode(request.fullpath).sub('/api/meta_data', '')
 
     @resource = MediaResource.get_by_path resource_path
 
@@ -37,7 +37,7 @@ class MediaResourcesApiController < ApplicationController
       return render :status => 404, :text => '请求的文件资源不存在'
     end
 
-    return render :text => @resource.metadata(:list => true).to_json
+    return render :text => @resource.meta_data(:list => true).to_json
   end
 
   def get_delta
@@ -53,7 +53,7 @@ class MediaResourcesApiController < ApplicationController
       return render :status => 403, :text => '指定的资源路径已经存在，不能重复创建'
     end
 
-    render :text => MediaResource.create_folder_from_path(params[:path]).metadata.to_json
+    render :text => MediaResource.create_folder_from_path(params[:path]).meta_data.to_json
   end
 
   def delete
@@ -65,7 +65,7 @@ class MediaResourcesApiController < ApplicationController
 
     @resource.destroy
 
-    render :text => @resource.metadata(:list => false).to_json
+    render :text => @resource.meta_data(:list => false).to_json
   end
 
   def delete_all

@@ -1,5 +1,28 @@
-class MediaResource < ActiveRecord::Base
-  belongs_to :file_entity
+class MediaResource
+  include Mongoid::Document
+  include Mongoid::Timestamps
+
+  field      :name,
+             :type    => String
+
+  field      :is_dir,
+             :type    => Boolean,
+             :default => false
+
+  field      :dir_id,
+             :type    => Integer
+
+  field      :creator_id,
+             :type    => Integer
+
+  field      :fileops_time,
+             :type    => DateTime
+
+  field      :is_removed,
+             :type    => Boolean,
+             :default => false
+
+  belongs_to :file_entity, :autosave => true
 
   belongs_to :creator,
              :class_name  => 'User',
@@ -10,8 +33,8 @@ class MediaResource < ActiveRecord::Base
 
   belongs_to :dir,
              :class_name  => 'MediaResource',
-             :foreign_key => 'dir_id',
-             :conditions  => {:is_dir => true}
+             :foreign_key => 'dir_id'
+             #:conditions  => {:is_dir => true}
 
   validates  :name,
              :uniqueness  => {
@@ -21,16 +44,16 @@ class MediaResource < ActiveRecord::Base
 
   before_create :create_fileops_time
 
-  default_scope where(:is_removed => false).order('is_dir desc', 'name asc')
-  scope      :removed,
-             where(:is_removed => true)
+  default_scope where(:is_removed => false).order_by(:is_dir.desc, :name.asc)
+  scope         :removed,
+                where(:is_removed => true)
 
-  def remove
+  def _remove
     self.update_attributes :is_removed   => true,
                            :fileops_time => Time.now
 
     self.media_resources.each {|resource|
-      resource.remove
+      resource._remove
     } if self.is_dir
 
     self
@@ -51,7 +74,7 @@ class MediaResource < ActiveRecord::Base
     resource = nil
 
     names.each {|name|
-      resource = collect.find_by_name(name)
+      resource = collect.find_by(:name => name)
       return nil if resource.blank?
       collect = resource.media_resources
     }
@@ -73,7 +96,8 @@ class MediaResource < ActiveRecord::Base
 
     collect = _mkdirs(resource_path, :with_file_name => true)[0]
 
-    resource = collect.find_or_initialize_by_name_and_is_dir(file_name, false)
+    resource = collect.find_or_initialize_by :name   => file_name,
+                                             :is_dir => false
 
     resource.file_entity = FileEntity.new({
       :attach => file,
@@ -96,7 +120,8 @@ class MediaResource < ActiveRecord::Base
     dir_names.pop if options[:with_file_name]
 
     return dir_names.reduce([MediaResource]) {|memo, dir_name|
-      dir = memo[0].find_or_create_by_name_and_is_dir(dir_name, true)
+      dir = memo[0].find_or_create_by :name   => dir_name,
+                                      :is_dir => true
       [dir.media_resources, dir]
     }
   end
@@ -104,8 +129,8 @@ class MediaResource < ActiveRecord::Base
   # ------------
   # 下面的代码还没动
 
-  def metadata(options = {:list => true})
-    is_dir ? dir_metadata(options) : file_metadata
+  def meta_data(options = {:list => true})
+    is_dir ? dir_meta_data(options) : file_meta_data
   end
 
   def attach
@@ -115,7 +140,7 @@ class MediaResource < ActiveRecord::Base
   def path(resource = self, input_array = [])
     path_ary = input_array
 
-    if resource.dir_id == 0
+    if resource.dir_id.nil?
       path_ary << self.name
       return path_ary.join('/').insert(0, '/')
     end
@@ -127,10 +152,10 @@ class MediaResource < ActiveRecord::Base
   end
 
 
-  def self.delta(cursor = 0, limit = 100)
-    delta    = self.where('id > ?', cursor).limit(limit)
-    entries  = delta.map {|r| [r.path, r.metadata(:list => false)]}
-    has_more = !delta.blank? && (self.last.id > delta.last.id)
+  def self.delta(cursor = Time.new(0), limit = 100)
+    delta    = self.where(:fileops_time.gt => cursor).limit(limit)
+    entries  = delta.map {|r| [r.path, r.meta_data(:list => false)]}
+    has_more = !delta.blank? && (self.last.fileops_time > delta.last.fileops_time)
 
     {
       :entries  => entries,
@@ -146,25 +171,25 @@ class MediaResource < ActiveRecord::Base
     path.sub('/', '').split('/')
   end
 
-  def file_metadata
-    base_metadata.merge({
+  def file_meta_data
+    base_meta_data.merge({
       :rev       => randstr(8),
       :modified  => updated_at,
       :mime_type => attach.content_type
     })
   end
 
-  def dir_metadata(options = {})
+  def dir_meta_data(options = {})
     options[:list] ?
 
-    base_metadata.merge(:contents => media_resources.map {|r|
-      r.is_dir ? r.send(:base_metadata) : r.metadata
+    base_meta_data.merge(:contents => media_resources.map {|r|
+      r.is_dir ? r.send(:base_meta_data) : r.meta_data
     }) :
 
-    base_metadata
+    base_meta_data
   end
 
-  def base_metadata
+  def base_meta_data
     {
       :bytes    => is_dir ? 0 : attach.size,
       :path     => path,

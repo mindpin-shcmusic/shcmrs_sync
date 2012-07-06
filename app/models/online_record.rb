@@ -1,17 +1,27 @@
 require 'uuidtools'
-class OnlineRecord < ActiveRecord::Base
+
+class OnlineRecord
+  include Mongoid::Document
+  include Mongoid::Timestamps
+
+  field      :user_id,
+             :type => Integer
+
+  field      :key,
+             :type => String
+
   belongs_to :user
   
   def self.onlines
-    all.includes(:user).order('created_at DESC')
+    all.includes(:user).order(:created_at.desc)
   end
   
   def self.online_users
-    all.where('user_id is not null').order('created_at DESC')
+    all.where(:user_id.exists => true).order(:created_at.desc)
   end
   
   def self.online_guests
-    all.where('user_id is null').order('created_at DESC')
+    all.where(:user_id.exists => false).order(:created_at.desc)
   end
   
   def self.refresh(user)
@@ -55,13 +65,13 @@ class OnlineRecord < ActiveRecord::Base
   # 在线用户数
   def self.usercount
     tidy
-    all.where('user_id is not null').count
+    all.where(:user_id.exists => true).count
   end
   
   # 在线非用户数
   def self.anonycount
     tidy
-    all.where('user_id is null').count
+    all.where(:user_id.exists => false).count
   end
   
   def self.clear_online_key(key)
