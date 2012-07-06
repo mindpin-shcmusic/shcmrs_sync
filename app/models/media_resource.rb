@@ -48,6 +48,9 @@ class MediaResource
   scope         :removed,
                 where(:is_removed => true)
 
+  scope         :root_res,
+                where(:dir_id.exists => false)
+
   def _remove
     self.update_attributes :is_removed   => true,
                            :fileops_time => Time.now
@@ -93,7 +96,6 @@ class MediaResource
     # file_name: "西瓜.jpg"
 
 
-
     collect = _mkdirs(resource_path, :with_file_name => true)[0]
 
     resource = collect.find_or_initialize_by :name   => file_name,
@@ -109,9 +111,7 @@ class MediaResource
 
   # 逐层创建文件夹资源（如果不存在），并返回最后一个文件夹资源 或者 MediaResource 类对象
   def self.create_folder_from_path(resource_path)
-    dir_resource = _mkdirs(resource_path)[1]
-
-    return dir_resource
+    return _mkdirs(resource_path)[1]
   end
 
   def self._mkdirs(resource_path, options = {:with_file_name => false})
@@ -119,7 +119,7 @@ class MediaResource
 
     dir_names.pop if options[:with_file_name]
 
-    return dir_names.reduce([MediaResource]) {|memo, dir_name|
+    return dir_names.reduce([MediaResource.root_res]) {|memo, dir_name|
       dir = memo[0].find_or_create_by :name   => dir_name,
                                       :is_dir => true
       [dir.media_resources, dir]
@@ -137,18 +137,10 @@ class MediaResource
     file_entity && file_entity.attach
   end
 
-  def path(resource = self, input_array = [])
-    path_ary = input_array
+  def path
+    return "/#{self.name}" if self.dir_id.nil?
 
-    if resource.dir_id.nil?
-      path_ary << self.name
-      return path_ary.join('/').insert(0, '/')
-    end
-
-    parent = MediaResource.find(resource.dir_id)
-
-    path parent,
-         path_ary.unshift(parent.name)
+    "#{self.dir.path}/#{self.name}"
   end
 
 

@@ -2,7 +2,7 @@
 module AuthenticatedSystem
 
   public
-  
+
   # 当某个controller需要登录验证时，加上这个 before_filter
   def login_required(info=nil)
     logged_in? || access_denied(info)
@@ -31,7 +31,7 @@ module AuthenticatedSystem
 
   def access_denied(info)
     return render :status=>401, :text => "ACCESS DENIED 需要先登录才可访问 #{info}" if request.xhr?
-    
+
     store_location
     flash[:notice] = info
     redirect_to '/login', :status=>302
@@ -67,11 +67,11 @@ module AuthenticatedSystem
   end
 
   # 被 current_user 方法调用 如果登录时勾选了 记住我，此方法会生效
-  def login_from_cookie    
+  def login_from_cookie
     if !cookies[remember_me_cookie_key].blank?
       user = User.authenticate_remember_me_cookie_token(cookies[remember_me_cookie_key])
       return user if !user.blank?
     end
   end
-  
+
 end

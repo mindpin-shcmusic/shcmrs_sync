@@ -36,4 +36,8 @@ group :test do
   gem 'turn', :require => false
 end
 
+group :development do
+  gem 'debugger'
+end
+
 gem 'uuidtools', :require => 'uuidtools'
