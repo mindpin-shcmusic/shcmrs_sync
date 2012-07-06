@@ -71,7 +71,7 @@ class MediaResource < ActiveRecord::Base
 
 
 
-    collect = _mkdirs(resource_path)[0]
+    collect = _mkdirs(resource_path, :with_file_name => true)[0]
 
     resource = collect.find_or_initialize_by_name_and_is_dir(file_name, false)
 
@@ -90,8 +90,10 @@ class MediaResource < ActiveRecord::Base
     return dir_resource
   end
 
-  def self._mkdirs(resource_path)
+  def self._mkdirs(resource_path, options = {:with_file_name => false})
     dir_names = get_names_from_path(resource_path)
+
+    dir_names.pop if options[:with_file_name]
 
     return dir_names.reduce([MediaResource]) {|memo, dir_name|
       dir = memo[0].find_or_create_by_name_and_is_dir(dir_name, true)
