@@ -1,6 +1,6 @@
 Voteapp::Application.routes.draw do  
   # -- 用户登录认证相关 --
-  root :to=>"index#index"
+  root :to => 'index#index'
   
   get  '/login'  => 'sessions#new'
   post '/login'  => 'sessions#create'
@@ -12,10 +12,8 @@ Voteapp::Application.routes.draw do
   # -- 以下可以自由添加其他 routes 配置项
 
   # web
-  get    '/file'                      => 'media_resources#index',
-         :as => 'file_index'
-  get    '/file/*path'                => 'media_resources#file',
-         :format => false
+  get    '/file'       => 'media_resources#index', :as => 'file_index'
+  get    '/file/*path' => 'media_resources#file', :format => false
 
   # api
   get    '/api/file/*path'            => 'media_resources_api#get_file'
@@ -24,5 +22,4 @@ Voteapp::Application.routes.draw do
   get    '/api/delta'                 => 'media_resources_api#get_delta'
   post   '/api/fileops/create_folder' => 'media_resources_api#create_folder'
   delete '/api/fileops/delete'        => 'media_resources_api#delete'
-  delete '/api/fileops/delete_all'    => 'media_resources_api#delete_all'
 end

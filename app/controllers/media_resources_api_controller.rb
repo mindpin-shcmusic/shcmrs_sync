@@ -4,7 +4,7 @@ class MediaResourcesApiController < ApplicationController
   def get_file
     resource_path = URI.decode(request.fullpath).sub('/api/file', '')
 
-    # 例如 /hello/test.txt
+    # 例如 /foo/bar/hello/test.txt
     @resource = MediaResource.get_by_path resource_path
 
     if @resource.blank?
@@ -37,23 +37,24 @@ class MediaResourcesApiController < ApplicationController
       return render :status => 404, :text => '请求的文件资源不存在'
     end
 
-    return render :text => @resource.metadata(:list => true).to_json
+    return render :json => @resource.metadata(:list => true)
   end
 
   def get_delta
-    cursor = params[:cursor] ? params[:cursor] : 0
+    cursor = params[:cursor] || 0
+    count  = params[:count] || 100
 
-    count = params[:count] ? params[:count] : 100
-
-    render :text => MediaResource.delta(cursor, count).to_json
+    render :json => MediaResource.delta(cursor, count)
   end
 
   def create_folder
-    if MediaResource.get_by_path params[:path]
+    resource_path = params[:path]
+
+    if MediaResource.get_by_path resource_path
       return render :status => 403, :text => '指定的资源路径已经存在，不能重复创建'
     end
 
-    render :text => MediaResource.create_folder_from_path(params[:path]).metadata.to_json
+    render :json => MediaResource.create_folder_by_path(resource_path).metadata
   end
 
   def delete
@@ -63,13 +64,9 @@ class MediaResourcesApiController < ApplicationController
       return render :status => 404, :text => '指定的路径上没有找到资源'
     end
 
-    @resource.destroy
+    @resource.remove
 
-    render :text => @resource.metadata(:list => false).to_json
+    render :json => @resource.metadata(:list => false)
   end
 
-  def delete_all
-    MediaResource.destroy_all
-    redirect_to '/file'
-  end
 end
