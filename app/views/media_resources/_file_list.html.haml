@@ -3,6 +3,21 @@
             '/api/fileops/delete_all',
             :method => :delete
 
+= file_field_tag :file,
+                 :multiple => true,
+                 :class    => 'file-upload',
+                 :data     => {:path => @media_resource ? @media_resource.path : '/'}
+
+= button_tag '上传文件',
+             :class => 'file-submit'
+
+= text_field_tag :folder, nil,
+                 :class => 'create-folder',
+                 :data  => {:path => @media_resource ? @media_resource.path : '/'}
+
+= button_tag '创建文件夹',
+             :class => 'folder-submit'
+
 %table
   %thead
     %tr
