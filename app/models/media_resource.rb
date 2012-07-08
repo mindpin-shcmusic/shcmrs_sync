@@ -35,12 +35,16 @@ class MediaResource < ActiveRecord::Base
   scope :removed, where(:is_removed => true)
   scope :root_res, where(:dir_id => 0)
 
+  def is_file?
+    !is_dir?
+  end
+
   # 根据传入的资源路径字符串，查找一个资源对象
   # 传入的路径类似 /foo/bar/hello/test.txt
   # 或者 /foo/bar/hello/world
   # 找到的资源对象，可能是一个文件资源，也可能是一个文件夹资源
-  def self.get_by_path(resource_path)
-    names = self._names_of_path(resource_path)
+  def self.get(resource_path)
+    names = self.split_path(resource_path)
 
     collect = self.root_res
     resource = nil
@@ -52,50 +56,50 @@ class MediaResource < ActiveRecord::Base
     }
 
     return resource
+  rescue InvalidPathError
+    return nil
   end
 
   # 根据传入的资源路径字符串以及文件对象，创建一个文件资源
   # 传入的路径类似 /hello/test.txt
   # 创建文件资源的过程中，关联创建文件夹资源
-  def self.put_file_by_path(resource_path, file)
-    file_name = self._names_of_path(resource_path)[-1]
+  def self.put(resource_path, file)
+    with_exclusive_scope do
+      file_name = self.split_path(resource_path)[-1]
+      dir_names = self.split_path(resource_path)[0...-1] # 只创建到上层目录
 
-    # 传入的是 /北极熊/企鹅/西瓜.jpg
-    # 则
-    # file_name: "西瓜.jpg"
-    # dirs ['北极熊', '企鹅']
+      collect = _mkdirs_by_names(dir_names).media_resources
 
-    collect = self._mkdirs_for_file(resource_path)
-
-    resource = collect.find_or_initialize_by_name(file_name)
-    resource._remove_children
-
-    resource.is_dir = false
-    resource.is_removed = false
-    resource.file_entity = FileEntity.new({
-      :attach => file,
-      :original_file_name => file_name
-    })
-
-    resource.save
+      resource = collect.find_or_initialize_by_name(file_name)
+      resource._remove_children!
+      resource.update_attributes(
+        :is_dir => false,
+        :is_removed => false,
+        :file_entity => FileEntity.new(
+          :attach => file,
+          :original_file_name => file_name
+        )
+      )
+    end
   end
 
-  def self.create_folder_by_path(resource_path)
-    self._mkdirs_for_path(resource_path)
+  def self.create_folder(resource_path)
+    raise RepeatedlyCreateFolderError if !self.get(resource_path).blank?
+
+    with_exclusive_scope do
+      dir_names = self.split_path(resource_path)
+      return _mkdirs_by_names(dir_names)
+    end
+  rescue InvalidPathError
+    return nil
   end
 
   def remove
-    self._remove_children
+    self._remove_children!
 
     self.update_attributes :is_removed   => true,
                            :fileops_time => Time.now
   end
-
-    def _remove_children
-      self.media_resources.each {|resource|
-        resource.remove
-      } if self.is_dir
-    end
 
   # -----------
 
@@ -157,47 +161,50 @@ class MediaResource < ActiveRecord::Base
 
 
   private
+    # 根据传入的 resource_path 划分出涉及到的资源名称数组
+    def self.split_path(resource_path) 
+      raise InvalidPathError if resource_path.blank?
+      raise InvalidPathError if resource_path[0...1] != '/'
+      raise InvalidPathError if resource_path == '/'
+      raise InvalidPathError if resource_path.match /\/{2,}/
+      raise InvalidPathError if resource_path.include?('\\')
 
-  # 根据传入的 resource_path 划分出涉及到的资源名称数组
-  def self._names_of_path(resource_path) 
-    resource_path.sub('/', '').split('/')
+      resource_path.sub('/', '').split('/')
+    end
+
+  public
+
+    def self._mkdirs_by_names(dir_names)
+      collect = MediaResource.root_res
+      dir_resource = MediaResource::RootDir
+
+      dir_names.each {|dir_name|
+        dir_resource = collect.find_or_create_by_name(dir_name)
+        dir_resource._change_to_unremoved_dir!
+        collect = dir_resource.media_resources
+      }
+
+      return dir_resource
+    end
+
+    def _change_to_unremoved_dir!
+      self.is_removed = false if self.is_removed?
+      self.is_dir = true if self.is_file?
+      self.save
+    end
+
+    def _remove_children!
+      self.media_resources.each {|resource|
+        resource.remove
+      } if self.is_dir
+    end
+
+  class InvalidPathError < Exception; end;
+  class RepeatedlyCreateFolderError < Exception; end;
+
+  class RootDir
+    def self.media_resources
+      MediaResource.root_res
+    end
   end
-
-  # 根据传入的 resource_path 逐层创建他的上层文件夹
-  # 传入的是 北极熊/企鹅/西瓜.jpg
-  # 则
-  # dir_names: ["北极熊", "企鹅"] (不包括 西瓜.jpg)
-  # 逐层地创建目录资源
-  def self._mkdirs_for_file(resource_path)
-    dir_names = self._names_of_path(resource_path)[0...-1] # 只创建到上层目录
-
-    collect = MediaResource.root_res
-
-    dir_names.each {|dir_name|
-      dir_resource = collect.find_or_create_by_name_and_is_dir(dir_name, true)
-      collect = dir_resource.media_resources
-    }
-
-    return collect
-  end
-
-  # 根据传入的 resource_path 逐层创建文件夹
-  # 传入的是 北极熊/企鹅/图片
-  # 则
-  # dir_names: ["北极熊", "企鹅", "图片"] 
-  # 逐层地创建目录资源
-  def self._mkdirs_for_path(resource_path)
-    dir_names = self._names_of_path(resource_path)
-
-    collect = MediaResource.root_res
-
-    dir_resource = nil
-    dir_names.each {|dir_name|
-      dir_resource = collect.find_or_create_by_name_and_is_dir(dir_name, true)
-      collect = dir_resource.media_resources
-    }
-
-    return dir_resource
-  end
-
 end

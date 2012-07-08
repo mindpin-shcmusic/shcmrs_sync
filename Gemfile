@@ -17,7 +17,10 @@ end
 gem 'haml'
 gem 'uuidtools', :require => 'uuidtools'
 gem 'paperclip', '~> 2.4'
+gem 'factory_girl', '~> 2.6'
+gem 'factory_girl_rails'
 
 group :development, :test do
   gem 'rspec-rails'
+  gem 'rcov'
 end
