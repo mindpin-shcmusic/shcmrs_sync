@@ -113,19 +113,17 @@ class MediaResource < ActiveRecord::Base
     {
       :bytes    => 0,
       :path     => self.path,
-      :is_dir   => false,
+      :is_dir   => true,
       :contents => contents
     }
   end
 
   def file_metadata
     {
-      :bytes     => self.attach.size,
+      :bytes     => self.attach.blank? ? 0 : self.attach.size,
       :path      => self.path,
       :is_dir    => false,
-      # :rev       => randstr(8),
-      # :modified  => updated_at,
-      :mime_type => self.attach.content_type
+      :mime_type => self.attach.blank? ? 'application/octet-stream' : self.attach.content_type
     }
   end
 
