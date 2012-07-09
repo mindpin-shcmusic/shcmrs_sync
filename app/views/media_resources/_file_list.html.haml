@@ -23,7 +23,7 @@
 
 
 = form_for @file_entity, :url => { :path=>/.+?/, :action=>"put_file", :controller=>"media_resources_api" }, :html => {:class => "", :multipart => true, :method => "put"} do |f|
-  %input{:name => 'file', :class => 'file-upload', :type => "file"}/
+  %input{:name => 'file', :id => 'file_entity_file', :class => 'file-upload', :type => "file"}/
   = f.submit "上传文件", :class => 'file-submit', :id => 'file-submit'
              
 %input{:name => "current_dir", :id => "current_dir", :type => "hidden", :value => "#{@current_dir}"}/
