@@ -2,7 +2,9 @@ class MediaResourcesController < ApplicationController
   def index
     @media_resources = MediaResource.where(:dir_id => 0)
 
+    @file_entity = FileEntity.new
 
+    @current_dir = "/res_files"
   end
 
   def file

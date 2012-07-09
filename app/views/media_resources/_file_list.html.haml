@@ -1,15 +1,32 @@
+- content_for :javascript do
+  :javascript
+
+    jQuery(document).ready(function() {
+      $("#file_entity_file").change(function() {
+        var filename = $(this).val();
+        var current_dir = $('#current_dir').val();
+        var path = current_dir + "/" + filename;
+
+        $('#new_file_entity').get(0).setAttribute('action', '/api/file_put' + path);
+      });
+    });
+
+    jQuery('#file-submit').bind('click', function() {
+      $('#new_file_entity').submit();
+    });
+
+
 %h2
   = link_to '删除全部文件',
             '/api/fileops/delete_all',
             :method => :delete
 
-= file_field_tag :file,
-                 :multiple => true,
-                 :class    => 'file-upload',
-                 :data     => {:path => @media_resource ? @media_resource.path : '/'}
 
-= button_tag '上传文件',
-             :class => 'file-submit'
+= form_for @file_entity, :url => { :path=>/.+?/, :action=>"put_file", :controller=>"media_resources_api" }, :html => {:class => "", :multipart => true, :method => "put"} do |f|
+  %input{:name => 'file', :class => 'file-upload', :type => "file"}/
+  = f.submit "上传文件", :class => 'file-submit', :id => 'file-submit'
+             
+%input{:name => "current_dir", :id => "current_dir", :type => "hidden", :value => "#{@current_dir}"}/
 
 = text_field_tag :folder, nil,
                  :class => 'create-folder',
@@ -18,12 +35,10 @@
 = button_tag '创建文件夹',
              :class => 'folder-submit'
 
-%table
-  %thead
-    %tr
-      %th 文件名
-  %tbody
-    - resources.each do |resource|
-      %tr
-        %td{:style => "background-color:#{resource.is_dir ? 'orange' : 'green'};"}
-          = link_to resource.name, resource.web_path
+%div
+  文件列表
+
+%ul
+  - resources.each do |resource|
+    %li{:style => "background-color:#{resource.is_dir ? 'white' : 'red'};"}
+      = link_to resource.name, ''
