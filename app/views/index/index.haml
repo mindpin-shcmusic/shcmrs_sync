@@ -1,6 +1,6 @@
 .page-welcome.bold 欢迎你，#{current_user.name}
 
-.page-auth-intro
+.page-auth-intro.hide
   .title 关于如何在开发中使用用户验证的说明
   .p
     在 View 和 Controller 层，可以使用以下方法
@@ -11,8 +11,11 @@
     .bold logged_in?
     判断当前是否是登录状态
 
+.page-auth-intro
+  
+
 .page-to-votes
-  =link_to '去投票列表','/votes'
+  =link_to '访问我的网盘','/file'
 
 .page-to-logout
   =link_to "退出登录","/logout"

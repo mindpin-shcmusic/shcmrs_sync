@@ -274,6 +274,7 @@ body {
   font-size: 12px;
   color: #404040; }
   body .page-header {
+    display: none;
     background: -moz-linear-gradient(-90deg, #1c8fdf, #1c86d1);
     background: -webkit-gradient(linear, 0% 0, 0% 100%, from(#1c8fdf), to(#1c86d1));
     box-shadow: 0 0 5px black inset;
@@ -286,8 +287,15 @@ body {
       padding: 0 40px;
       text-shadow: 1px 1px 2px black; }
   body .page-content {
-    width: 960px;
-    margin: 20px 40px; }
+    margin: 20px 20px 20px 245px; }
+    body .page-content:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 225px;
+      background-color: #0F639F; }
     body .page-content table {
       border-spacing: 0;
       border-collapse: collapse;
@@ -562,3 +570,81 @@ body {
       background: -webkit-gradient(linear, 0% 0, 0% 100%, from(#db3f2c), to(#b83324));
       border-color: #952216;
       text-decoration: none; }
+
+.page-media-resource-list .media-resource-blank {
+  height: 28px;
+  line-height: 28px;
+  padding: 11px;
+  border-bottom: solid 1px #E5E5E5; }
+.page-media-resource-list .media-resource {
+  height: 28px;
+  line-height: 28px;
+  padding: 11px;
+  border-bottom: solid 1px #E5E5E5; }
+  .page-media-resource-list .media-resource a.link {
+    float: left;
+    height: 28px;
+    padding-left: 46px;
+    font-size: 14px;
+    color: #444;
+    margin-right: 20px; }
+    .page-media-resource-list .media-resource a.link:hover {
+      color: #444; }
+  .page-media-resource-list .media-resource.dir a.link {
+    background: url(ico.png) 0px -124px no-repeat; }
+  .page-media-resource-list .media-resource.file a.link {
+    background: url(ico.png) 0px -603px no-repeat; }
+  .page-media-resource-list .media-resource a.delete {
+    display: none; }
+  .page-media-resource-list .media-resource .size {
+    font-size: 11px;
+    float: right; }
+  .page-media-resource-list .media-resource .time {
+    font-size: 11px;
+    float: right;
+    margin-left: 20px; }
+  .page-media-resource-list .media-resource:hover {
+    background-color: #f1f1f1; }
+    .page-media-resource-list .media-resource:hover a.delete {
+      display: block;
+      float: left;
+      font-size: 14px; }
+
+.page-media-resources-nav {
+  height: 50px;
+  line-height: 50px;
+  border-bottom: solid 1px #E5E5E5;
+  font-size: 14px;
+  border-top: solid 2px #B0C6D6; }
+  .page-media-resources-nav .go-parent-dir {
+    float: left;
+    padding-right: 11px;
+    border-right: solid 1px #E5E5E5;
+    margin-right: 11px;
+    padding-left: 11px; }
+  .page-media-resources-nav .navs {
+    float: left; }
+    .page-media-resources-nav .navs span {
+      float: left; }
+      .page-media-resources-nav .navs span:after {
+        content: '>';
+        padding: 0 10px;
+        color: #b2b2b2; }
+      .page-media-resources-nav .navs span:last-child:after {
+        display: none; }
+
+.page-media-resources-forms {
+  margin-bottom: 20px;
+  overflow: hidden; }
+  .page-media-resources-forms form {
+    float: left; }
+  .page-media-resources-forms form.upload-file {
+    border-right: solid 2px #E5E5E5;
+    padding-right: 20px;
+    margin-right: 20px; }
+  .page-media-resources-forms form.create-folder {
+    border-right: solid 2px #E5E5E5;
+    padding-right: 20px;
+    margin-right: 20px; }
+  .page-media-resources-forms .logout {
+    font-size: 14px; }

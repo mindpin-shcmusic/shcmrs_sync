@@ -12,10 +12,12 @@ Voteapp::Application.routes.draw do
   # -- 以下可以自由添加其他 routes 配置项
 
   # web
-  get    '/file'       => 'media_resources#index', :as => 'file_index'
+  get    '/file'       => 'media_resources#index'
   get    '/file/*path' => 'media_resources#file', :format => false
+
+  put    '/file_put/*path' => 'media_resources#upload_file'
   post   '/file/create_folder' => 'media_resources#create_folder'
-  delete   '/file/*path' => 'media_resources#destroy'
+  delete '/file/*path' => 'media_resources#destroy'
 
   # api
   get    '/api/file/*path'            => 'media_resources_api#get_file'

@@ -1,6 +1,16 @@
-- if resources.any?
-  %ul
-    - resources.each do |resource|
-      %li{:style => "background-color:#{resource.is_dir ? 'white' : 'white'};"}
-        = link_to resource.name, "/file" + resource.path
-        = link_to "删除", "/file" + resource.path, :method => "delete"
+.page-media-resource-list
+  - if resources.blank?
+    .media-resource-blank.quiet
+      该目录下没有资源
+
+  - resources.each do |resource|
+    :ruby
+      klass = resource.is_dir? ? 'dir' : 'file'
+      url = File.join('/file', resource.path)
+      time = resource.fileops_time.localtime
+
+    .media-resource{:class => klass}
+      = link_to resource.name, url, :class=>'link'
+      = link_to '删除', url, :method => 'delete', :confirm=>'确定吗？', :class=>'delete'
+      .time.quiet=time
+      .size.quiet=media_resource_size_str(resource)

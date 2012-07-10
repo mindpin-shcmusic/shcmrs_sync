@@ -27,6 +27,7 @@ body{
   color:#404040;
 
   .page-header{
+    display:none;
     @include gradient(#1C8FDF, #1C86D1);
     box-shadow:0 0 5px black inset;
     $h:60px;
@@ -41,8 +42,17 @@ body{
   }
   
   .page-content{
-    width:960px;
-    margin:20px 40px;
+    margin:20px 20px 20px 245px;
+
+    &:before{
+      content:'';
+      position:absolute;
+      top:0;bottom:0;
+      left:0;width:225px;
+      background-color:#0F639F;
+    }
+
+
     table{
       border-spacing:0;
       border-collapse:collapse;
@@ -352,5 +362,100 @@ body{
         };
       }
     }
+  }
+}
+
+//////////////////////////////////////////
+
+.page-media-resource-list{
+  .media-resource-blank{
+    height:28px;line-height:28px;
+    padding:11px;
+    border-bottom:solid 1px #E5E5E5;
+  }
+
+  .media-resource{
+    height:28px;line-height:28px;
+    padding:11px;
+    border-bottom:solid 1px #E5E5E5;
+
+    a.link{
+      float:left;
+      height:28px;
+      padding-left:46px;
+      font-size:14px;
+      color:#444;&:hover{color:#444;}
+      margin-right:20px;
+    }
+    &.dir a.link{background:url(ico.png) 0px -124px no-repeat;}
+    &.file a.link{background:url(ico.png) 0px -603px no-repeat;}
+
+    a.delete{
+      display:none;
+    }
+
+    .size{font-size:11px;float:right;}
+    .time{font-size:11px;float:right;margin-left:20px;}
+
+    &:hover{
+      background-color:#f1f1f1;
+      a.delete{
+        display:block;
+        float:left;
+        font-size:14px;
+      }
+    }
+  }
+}
+
+.page-media-resources-nav{
+    height:50px;line-height:50px;
+    border-bottom:solid 1px #E5E5E5;
+    font-size:14px;
+    border-top:solid 2px #B0C6D6;
+
+    .go-parent-dir{
+      float:left;
+      padding-right:11px;
+      border-right:solid 1px #E5E5E5;
+      margin-right:11px;
+      padding-left:11px;
+    }
+    .navs{
+      float:left;
+      span{
+        float:left;
+        &:after{
+          content:'>';
+          padding:0 10px;
+          color:#b2b2b2;
+        }
+        &:last-child{
+          &:after{display:none;}
+        }
+      }
+    }
+}
+
+.page-media-resources-forms{
+  margin-bottom:20px;
+  overflow:hidden;
+
+  form{float:left;}
+
+  form.upload-file{
+    border-right:solid 2px #E5E5E5;
+    padding-right:20px;
+    margin-right:20px;
+  }
+
+  form.create-folder{
+    border-right:solid 2px #E5E5E5;
+    padding-right:20px;
+    margin-right:20px;
+  }
+
+  .logout{
+    font-size:14px;
   }
 }

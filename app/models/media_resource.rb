@@ -46,9 +46,11 @@ class MediaResource < ActiveRecord::Base
 
   # --------
 
-  default_scope where(:is_removed => false).order('fileops_time ASC')
+  default_scope where(:is_removed => false)
   scope :removed, where(:is_removed => true)
   scope :root_res, where(:dir_id => 0)
+  scope :ops_order, order('fileops_time ASC')
+  scope :web_order, order('is_dir DESC, name ASC')
 
   def is_file?
     !is_dir?
@@ -162,23 +164,25 @@ class MediaResource < ActiveRecord::Base
   end
 
   def self.delta(creator, cursor, limit = 100)
-    delta_media_resources = creator.media_resources.where('fileops_time > ?', cursor || 0).limit(limit)
+    with_exclusive_scope do
+      delta_media_resources = creator.media_resources.where('fileops_time > ?', cursor || 0).limit(limit)
 
-    if delta_media_resources.blank?
-      new_cursor = cursor
-      has_more   = false
-    else
-      last_fileops_time = delta_media_resources.last.fileops_time
-      new_cursor = last_fileops_time
-      has_more   = last_fileops_time < MediaResource.last.fileops_time
+      if delta_media_resources.blank?
+        new_cursor = cursor
+        has_more   = false
+      else
+        last_fileops_time = delta_media_resources.last.fileops_time
+        new_cursor = last_fileops_time
+        has_more   = last_fileops_time < MediaResource.last.fileops_time
+      end
+
+      return {
+        :entries  => delta_media_resources.map {|r| [r.path, r.metadata(:list => false)]},
+        :reset    => false,
+        :cursor   => new_cursor,
+        :has_more => has_more
+      }
     end
-
-    return {
-      :entries  => delta_media_resources.map {|r| [r.path, r.metadata(:list => false)]},
-      :reset    => false,
-      :cursor   => new_cursor,
-      :has_more => has_more
-    }
   end
 
   private

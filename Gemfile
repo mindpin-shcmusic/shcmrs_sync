@@ -24,4 +24,5 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'rcov'
   gem 'spork', '~> 0.9.2'
+  gem 'timecop'
 end

@@ -245,6 +245,8 @@ describe MediaResource do
           MediaResource.count.should == count + 2        
           MediaResource.removed.count.should == removed_count - 1
         end
+
+        pending '创建资源时文件参数不能传 nil'
       end
 
       describe '创建文件夹资源' do
@@ -483,10 +485,50 @@ describe MediaResource do
 
         delta[:entries][0][0].should == '/北极熊'
 
-        sleep 5
+        Timecop.travel(Time.now + 1.hours)
         MediaResource.put(@ben7th, '/游戏/网络游戏/魔兽世界.zip', file)
-        MediaResource.delta(@ben7th, cursor)[:entries].blank?.should == false
-        MediaResource.delta(@ben7th, cursor)[:entries].length.should == 3
+        delta = MediaResource.delta(@ben7th, cursor)
+        delta[:entries].blank?.should == false
+        delta[:entries].length.should == 3
+        cursor_2 = delta[:cursor]
+
+        Timecop.travel(Time.now + 1.hours)
+        MediaResource.put(@ben7th, '/游戏/RPG游戏/空之轨迹FC.zip', file)
+
+        delta_2 = MediaResource.delta(@ben7th, cursor)
+        delta_2[:entries].blank?.should == false
+        delta_2[:entries].length.should == 5
+
+        delta_2 = MediaResource.delta(@ben7th, cursor_2)
+        delta_2[:entries].blank?.should == false
+        delta_2[:entries].length.should == 2
+        cursor_3 = delta_2[:cursor]
+
+        Timecop.travel(Time.now + 1.hours)
+        MediaResource.get(@ben7th, '/游戏/RPG游戏').remove
+        delta_3 = MediaResource.delta(@ben7th, cursor_3)
+        delta_3[:entries].blank?.should == false
+        delta_3[:entries].length.should == 2
+
+      end
+
+      it '删除后的变更应该可以获取到' do
+        cursor = MediaResource.delta(@ben7th, nil)[:cursor]
+
+        Timecop.travel(Time.now + 1.hours)
+        MediaResource.put(@ben7th, '/游戏/网络游戏/魔兽世界.zip', file)
+        delta = MediaResource.delta(@ben7th, cursor)
+        delta[:entries].blank?.should == false
+        delta[:entries].length.should == 3
+        cursor_2 = delta[:cursor]
+
+        Timecop.travel(Time.now + 1.hours)
+        MediaResource.get(@ben7th, '/游戏/网络游戏').remove
+        delta_2 = MediaResource.delta(@ben7th, cursor_2)
+        delta_2[:entries].blank?.should == false
+        delta_2[:entries].length.should == 2
+
+        pending '包含资源删除的变更信息，格式应当正确'
       end
       
       it '不同用户取得各自的delta信息时，不会冲突' do
