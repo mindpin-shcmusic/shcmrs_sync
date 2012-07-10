@@ -1,6 +1,7 @@
 class MediaResourcesController < ApplicationController
   def index
-    @media_resources = MediaResource.where(:dir_id => 0)
+    # @media_resources = MediaResource.where(:dir_id => 0, :creator_id => current_user.id)
+    @media_resources = current_user.media_resources.root_res
 
     @file_entity = FileEntity.new
 
@@ -15,7 +16,7 @@ class MediaResourcesController < ApplicationController
 
     @paths = resource_path.split(/\//)
 
-    @media_resources = MediaResource.get(resource_path).media_resources
+    @media_resources = MediaResource.get(current_user, resource_path).media_resources
 
     render :action => "index"
   end
@@ -26,7 +27,7 @@ class MediaResourcesController < ApplicationController
     if matched
       resource_path = params[:current_dir] + "/" + params[:folder]
       resource_path = resource_path.gsub("//", "/")
-      MediaResource.create_folder(resource_path)
+      MediaResource.create_folder(current_user, resource_path)
 
       @media_resources = MediaResource.all
     else
@@ -38,7 +39,7 @@ class MediaResourcesController < ApplicationController
 
   def destroy
     resource_path = URI.decode(request.fullpath).sub('/file', '')
-    media_resource = MediaResource.get(resource_path)
+    media_resource = MediaResource.get(current_user, resource_path)
     media_resource.remove
 
     redirect_to :back
