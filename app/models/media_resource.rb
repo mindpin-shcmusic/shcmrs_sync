@@ -19,8 +19,11 @@ class MediaResource < ActiveRecord::Base
   validates  :name,
              :uniqueness  => {
                :case_sensitive => false,
-               :scope          => :dir_id
+               :scope     => [:dir_id, :creator_id]
              }
+
+  validates  :creator,
+             :presence    => true
 
   # --------
 
@@ -29,9 +32,21 @@ class MediaResource < ActiveRecord::Base
     self.fileops_time = Time.now
   end
 
+  before_create :update_parent_dirs_files_count
+  def update_parent_dirs_files_count
+    return true if self.is_dir?
+
+    parent_dir = self.dir
+    while !parent_dir.blank? do
+      parent_dir.increment!(:files_count, 1)
+      parent_dir = parent_dir.dir
+    end
+    return true
+  end
+
   # --------
 
-  default_scope where(:is_removed => false).order('is_dir DESC', 'name ASC')
+  default_scope where(:is_removed => false).order('fileops_time ASC')
   scope :removed, where(:is_removed => true)
   scope :root_res, where(:dir_id => 0)
 
@@ -43,10 +58,10 @@ class MediaResource < ActiveRecord::Base
   # 传入的路径类似 /foo/bar/hello/test.txt
   # 或者 /foo/bar/hello/world
   # 找到的资源对象，可能是一个文件资源，也可能是一个文件夹资源
-  def self.get(resource_path)
+  def self.get(creator, resource_path)
     names = self.split_path(resource_path)
 
-    collect = self.root_res
+    collect = creator.media_resources.root_res
     resource = nil
 
     names.each {|name|
@@ -63,32 +78,31 @@ class MediaResource < ActiveRecord::Base
   # 根据传入的资源路径字符串以及文件对象，创建一个文件资源
   # 传入的路径类似 /hello/test.txt
   # 创建文件资源的过程中，关联创建文件夹资源
-  def self.put(resource_path, file)
+  def self.put(creator, resource_path, file)
+    raise NotAssignCreatorError if creator.blank?
+
     with_exclusive_scope do
       file_name = self.split_path(resource_path)[-1]
       dir_names = self.split_path(resource_path)[0...-1] # 只创建到上层目录
 
-      collect = _mkdirs_by_names(dir_names).media_resources
+      collect = _mkdirs_by_names(creator, dir_names).media_resources
 
-      resource = collect.find_or_initialize_by_name(file_name)
+      resource = collect.find_or_initialize_by_name_and_creator_id(file_name, creator.id)
       resource._remove_children!
       resource.update_attributes(
-        :is_dir => false,
-        :is_removed => false,
-        :file_entity => FileEntity.new(
-          :attach => file,
-          :original_file_name => file_name
-        )
+        :is_dir      => false,
+        :is_removed  => false,
+        :file_entity => FileEntity.new(:attach => file)
       )
     end
   end
 
-  def self.create_folder(resource_path)
-    raise RepeatedlyCreateFolderError if !self.get(resource_path).blank?
+  def self.create_folder(creator, resource_path)
+    raise RepeatedlyCreateFolderError if !self.get(creator, resource_path).blank?
 
     with_exclusive_scope do
       dir_names = self.split_path(resource_path)
-      return _mkdirs_by_names(dir_names)
+      return _mkdirs_by_names(creator, dir_names)
     end
   rescue InvalidPathError
     return nil
@@ -99,6 +113,14 @@ class MediaResource < ActiveRecord::Base
 
     self.update_attributes :is_removed   => true,
                            :fileops_time => Time.now
+
+    if self.is_file?
+      parent_dir = self.dir
+      while !parent_dir.blank? do
+        parent_dir.decrement!(:files_count, 1)
+        parent_dir = parent_dir.dir
+      end
+    end
   end
 
   # -----------
@@ -139,24 +161,25 @@ class MediaResource < ActiveRecord::Base
     return "#{self.dir.path}/#{self.name}"
   end
 
+  def self.delta(creator, cursor, limit = 100)
+    delta_media_resources = creator.media_resources.where('fileops_time > ?', cursor || 0).limit(limit)
 
-  # def self.delta(cursor = 0, limit = 100)
-  #   delta    = self.where('id > ?', cursor).limit(limit)
-  #   entries  = delta.map {|r| [r.path, r.metadata(:list => false)]}
-  #   has_more = !delta.blank? && (self.last.id > delta.last.id)
+    if delta_media_resources.blank?
+      new_cursor = cursor
+      has_more   = false
+    else
+      last_fileops_time = delta_media_resources.last.fileops_time
+      new_cursor = last_fileops_time
+      has_more   = last_fileops_time < MediaResource.last.fileops_time
+    end
 
-  #   {
-  #     :entries  => entries,
-  #     :reset    => false,
-  #     :cursor   => delta.last && delta.last.id,
-  #     :has_more => has_more
-  #   }
-  # end
-
-  # def web_path
-  #   '/file' + path
-  # end
-
+    return {
+      :entries  => delta_media_resources.map {|r| [r.path, r.metadata(:list => false)]},
+      :reset    => false,
+      :cursor   => new_cursor,
+      :has_more => has_more
+    }
+  end
 
   private
     # 根据传入的 resource_path 划分出涉及到的资源名称数组
@@ -172,12 +195,12 @@ class MediaResource < ActiveRecord::Base
 
   public
 
-    def self._mkdirs_by_names(dir_names)
-      collect = MediaResource.root_res
+    def self._mkdirs_by_names(creator, dir_names)
+      collect = creator.media_resources.root_res
       dir_resource = MediaResource::RootDir
 
       dir_names.each {|dir_name|
-        dir_resource = collect.find_or_create_by_name(dir_name)
+        dir_resource = collect.find_or_initialize_by_name_and_creator_id(dir_name, creator.id)
         dir_resource._change_to_unremoved_dir!
         collect = dir_resource.media_resources
       }
@@ -199,6 +222,7 @@ class MediaResource < ActiveRecord::Base
 
   class InvalidPathError < Exception; end;
   class RepeatedlyCreateFolderError < Exception; end;
+  class NotAssignCreatorError < Exception; end;
 
   class RootDir
     def self.media_resources
