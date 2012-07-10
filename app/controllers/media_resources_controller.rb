@@ -4,9 +4,10 @@ class MediaResourcesController < ApplicationController
 
     @file_entity = FileEntity.new
 
-    @current_dir = "/res_files"
+    @current_dir = "/"
   end
 
+=begin
   def file
     resource_path = URI.decode(request.fullpath).sub('/file', '')
 
@@ -15,4 +16,15 @@ class MediaResourcesController < ApplicationController
            :file   => "#{Rails.root}/public/404.html",
            :layout => false if @media_resource.nil?
   end
+=end
+
+
+  def create_folder
+    MediaResource.create_folder(params[:resource_path])
+
+    @media_resources = MediaResource.all
+
+    render :layout => false
+  end
+
 end

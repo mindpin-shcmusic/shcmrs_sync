@@ -14,6 +14,7 @@ Voteapp::Application.routes.draw do
   # web
   get    '/file'       => 'media_resources#index', :as => 'file_index'
   get    '/file/*path' => 'media_resources#file', :format => false
+  post   '/file/create_folder' => 'media_resources#create_folder'
 
   # api
   get    '/api/file/*path'            => 'media_resources_api#get_file'

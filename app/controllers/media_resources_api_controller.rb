@@ -50,7 +50,7 @@ class MediaResourcesApiController < ApplicationController
   def create_folder
     resource_path = params[:path]
 
-    if MediaResource.get_by_path resource_path
+    if MediaResource.get resource_path
       return render :status => 403, :text => '指定的资源路径已经存在，不能重复创建'
     end
 
@@ -58,7 +58,7 @@ class MediaResourcesApiController < ApplicationController
   end
 
   def delete
-    @resource = MediaResource.get_by_path params[:path]
+    @resource = MediaResource.get params[:path]
 
     if @resource.blank?
       return render :status => 404, :text => '指定的路径上没有找到资源'
