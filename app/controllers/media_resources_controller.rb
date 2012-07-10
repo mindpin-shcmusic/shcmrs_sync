@@ -7,24 +7,39 @@ class MediaResourcesController < ApplicationController
     @current_dir = "/"
   end
 
-=begin
   def file
-    resource_path = URI.decode(request.fullpath).sub('/file', '')
+    @file_entity = FileEntity.new
 
-    @media_resource = MediaResource.get_by_path resource_path
-    render :status => 404,
-           :file   => "#{Rails.root}/public/404.html",
-           :layout => false if @media_resource.nil?
+    resource_path = URI.decode(request.fullpath).sub('/file', '')
+    @current_dir = resource_path
+
+    @paths = resource_path.split(/\//)
+
+    @media_resources = MediaResource.get(resource_path).media_resources
+
+    render :action => "index"
   end
-=end
 
 
   def create_folder
-    MediaResource.create_folder(params[:resource_path])
+    matched = params[:folder].match(/^([A-Za-z0-9一-龥\-\_\.]+)$/)
+    if matched
+      resource_path = params[:current_dir] + "/" + params[:folder]
+      resource_path = resource_path.gsub("//", "/")
+      MediaResource.create_folder(resource_path)
 
-    @media_resources = MediaResource.all
+      @media_resources = MediaResource.all
+    end
 
-    render :layout => false
+    redirect_to "/file"
+  end
+
+  def destroy
+    resource_path = URI.decode(request.fullpath).sub('/file', '')
+    media_resource = MediaResource.get(resource_path)
+    media_resource.remove
+
+    redirect_to :back
   end
 
 end

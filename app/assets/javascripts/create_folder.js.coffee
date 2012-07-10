@@ -1,4 +1,5 @@
 $ ->
+  ###
   $create_folder = $ '.create-folder'
   $submit        = $ '.folder-submit'
   base_path      = $create_folder.data 'path'
@@ -24,3 +25,5 @@ $ ->
 
     $request.error =>
       console.log 'ohn'
+
+  ###

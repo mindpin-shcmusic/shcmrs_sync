@@ -1,0 +1,51 @@
+- content_for :javascript do
+  :javascript
+
+    jQuery(document).ready(function() {
+      $("#file_entity_file").change(function() {
+        var filename = $(this).val();
+        var current_dir = $('#current_dir').val();
+        var path = current_dir + "/" + filename;
+
+        $('#new_file_entity').get(0).setAttribute('action', '/api/file_put' + path);
+      });
+    });
+
+    jQuery('#file-submit').bind('click', function() {
+      $('#new_file_entity').submit();
+    });
+
+    jQuery('#folder-submit').bind('click', function() {
+      $('#new_folder_form').submit();
+    });
+
+
+
+= form_for @file_entity, :url => { :path=>/.+?/, :action=>"put_file", :controller=>"media_resources_api" }, :html => {:class => "", :multipart => true, :method => "put"} do |f|
+  %input{:name => 'file', :id => 'file_entity_file', :class => 'file-upload', :type => "file"}/
+  = f.submit "上传文件", :class => 'file-submit', :id => 'file-submit'
+             
+
+%form{:action => "/file/create_folder", :method => "post", :id => "new_folder_form", :name => "new_folder_form"}
+  %input{:name => "current_dir", :id => "current_dir", :type => "hidden", :value => "#{@current_dir}"}/
+  = text_field_tag :folder, nil, :class => 'create-folder'
+
+  %input{:name => "create_btn", :class => "folder-submit", :id => "folder-submit", :type => "submit", :value => "创建文件夹"}/
+
+
+%div
+  %span
+    - if @current_dir == "/"
+      %span{:style => "color: grey;"}= "上一级"
+    - else
+      %span= link_to "上一级", "/file" + @paths[0...-1].join("/")
+  %span
+    = link_to "根目录", "/file"
+  - unless @paths.nil?
+    - links = ""
+    - @paths.each do |path|
+      :ruby
+        links = links + "/" + path
+      %span= link_to path, "/file" + links
+      %span= " > "
+

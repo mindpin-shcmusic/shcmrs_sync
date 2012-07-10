@@ -1,56 +1,6 @@
-- content_for :javascript do
-  :javascript
-
-    jQuery(document).ready(function() {
-      $("#file_entity_file").change(function() {
-        var filename = $(this).val();
-        var current_dir = $('#current_dir').val();
-        var path = current_dir + filename;
-
-        $('#new_file_entity').get(0).setAttribute('action', '/api/file_put' + path);
-      });
-    });
-
-    jQuery('#file-submit').bind('click', function() {
-      $('#new_file_entity').submit();
-    });
-
-    jQuery('#folder-submit').bind('click', function() {
-      var folder = $('#folder').val();
-      var current_dir = $('#current_dir').val();
-      var resource_path = current_dir + folder;
-
-      $.ajax({
-        type: 'POST',
-        url: "/file/create_folder",
-        data: {resource_path: resource_path},
-        dataType: "html"
-      }).done(function ( data ) {
-        
-      });
-      
-    });
+= render 'media_resources/parts/file_menu'
 
 
-%h2
-  = link_to '删除全部文件',
-            '/api/fileops/delete_all',
-            :method => :delete
 
-
-= form_for @file_entity, :url => { :path=>/.+?/, :action=>"put_file", :controller=>"media_resources_api" }, :html => {:class => "", :multipart => true, :method => "put"} do |f|
-  %input{:name => 'file', :id => 'file_entity_file', :class => 'file-upload', :type => "file"}/
-  = f.submit "上传文件", :class => 'file-submit', :id => 'file-submit'
-             
-%input{:name => "current_dir", :id => "current_dir", :type => "hidden", :value => "#{@current_dir}"}/
-
-= text_field_tag :folder, nil,
-                 :class => 'create-folder',
-                 :data  => {:path => @media_resource ? @media_resource.path : '/'}
-
-= button_tag '创建文件夹', :class => "folder-submit", :id => "folder-submit"
-
-%div
-  文件列表
-
-= render 'media_resources/parts/file_list', :resources => @media_resources
+%div#current_files
+  = render 'media_resources/parts/file_list', :resources => @media_resources

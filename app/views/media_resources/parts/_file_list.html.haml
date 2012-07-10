@@ -1,4 +1,6 @@
-%ul
-  - resources.each do |resource|
-    %li{:style => "background-color:#{resource.is_dir ? 'white' : 'white'};"}
-      = link_to resource.name, "/file/#{resource.name}"
+- if resources.any?
+  %ul
+    - resources.each do |resource|
+      %li{:style => "background-color:#{resource.is_dir ? 'white' : 'white'};"}
+        = link_to resource.name, "/file" + resource.path
+        = link_to "删除", "/file" + resource.path, :method => "delete"
