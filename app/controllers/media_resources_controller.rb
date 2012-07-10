@@ -29,9 +29,11 @@ class MediaResourcesController < ApplicationController
       MediaResource.create_folder(resource_path)
 
       @media_resources = MediaResource.all
+    else
+      flash[:error] = "非法文件目录"
     end
 
-    redirect_to "/file"
+    redirect_to :back
   end
 
   def destroy

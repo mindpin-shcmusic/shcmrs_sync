@@ -26,6 +26,9 @@
   = f.submit "上传文件", :class => 'file-submit', :id => 'file-submit'
              
 
+%p
+  = flash[:error]
+  
 %form{:action => "/file/create_folder", :method => "post", :id => "new_folder_form", :name => "new_folder_form"}
   %input{:name => "current_dir", :id => "current_dir", :type => "hidden", :value => "#{@current_dir}"}/
   = text_field_tag :folder, nil, :class => 'create-folder'
