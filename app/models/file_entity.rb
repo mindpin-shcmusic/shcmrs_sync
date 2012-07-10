@@ -11,10 +11,7 @@ class FileEntity < ActiveRecord::Base
       return entity
     end
 
-    file_name = File.basename(file.path)
-
-    entity = FileEntity.create :attach             => file,
-                               :original_file_name => file_name,
-                               :md5                => md5
+    entity = FileEntity.create :attach => file,
+                               :md5    => md5
   end
 end

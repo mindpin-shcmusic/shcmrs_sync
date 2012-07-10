@@ -21,7 +21,7 @@ class MediaResourcesApiController < ApplicationController
   def put_file
     resource_path = URI.decode(request.fullpath).sub('/api/file_put', '')
     
-    if MediaResource.put resource_path, params[:file]
+    if MediaResource.put(resource_path, params[:file])
       return render :text => 'OK'
     end
 
