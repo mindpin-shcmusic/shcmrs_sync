@@ -82,6 +82,7 @@ class MediaResource < ActiveRecord::Base
   # 创建文件资源的过程中，关联创建文件夹资源
   def self.put(creator, resource_path, file)
     raise NotAssignCreatorError if creator.blank?
+    raise FileEmptyError if file.blank?
 
     with_exclusive_scope do
       file_name = self.split_path(resource_path)[-1]
@@ -176,8 +177,12 @@ class MediaResource < ActiveRecord::Base
         has_more   = last_fileops_time < MediaResource.last.fileops_time
       end
 
+      entries = delta_media_resources.map do |r|
+        [r.path, r.is_removed? ? nil : r.metadata(:list => false)]
+      end
+
       return {
-        :entries  => delta_media_resources.map {|r| [r.path, r.metadata(:list => false)]},
+        :entries  => entries,
         :reset    => false,
         :cursor   => new_cursor,
         :has_more => has_more
@@ -227,6 +232,7 @@ class MediaResource < ActiveRecord::Base
   class InvalidPathError < Exception; end;
   class RepeatedlyCreateFolderError < Exception; end;
   class NotAssignCreatorError < Exception; end;
+  class FileEmptyError < Exception; end;
 
   class RootDir
     def self.media_resources

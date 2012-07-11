@@ -246,7 +246,11 @@ describe MediaResource do
           MediaResource.removed.count.should == removed_count - 1
         end
 
-        pending '创建资源时文件参数不能传 nil'
+        it '创建资源时文件参数不能传 nil 否则抛异常' do
+          expect {
+            MediaResource.put(@ben7th, '/fooo/barrr/hoho', nil)
+          }.to raise_error(MediaResource::FileEmptyError)
+        end
       end
 
       describe '创建文件夹资源' do
@@ -492,6 +496,19 @@ describe MediaResource do
         delta[:entries].length.should == 3
         cursor_2 = delta[:cursor]
 
+        delta[:entries][0].should == [
+          '/游戏', 
+          MediaResource.get(@ben7th, '/游戏').metadata(:list => false)
+        ]
+        delta[:entries][1].should == [
+          '/游戏/网络游戏', 
+          MediaResource.get(@ben7th, '/游戏/网络游戏').metadata(:list => false)
+        ]
+        delta[:entries][2].should == [
+          '/游戏/网络游戏/魔兽世界.zip', 
+          MediaResource.get(@ben7th, '/游戏/网络游戏/魔兽世界.zip').metadata
+        ]
+
         Timecop.travel(Time.now + 1.hours)
         MediaResource.put(@ben7th, '/游戏/RPG游戏/空之轨迹FC.zip', file)
 
@@ -512,7 +529,7 @@ describe MediaResource do
 
       end
 
-      it '删除后的变更应该可以获取到' do
+      it '删除文件导致的变更应该可以获取到，格式也应当正确' do
         cursor = MediaResource.delta(@ben7th, nil)[:cursor]
 
         Timecop.travel(Time.now + 1.hours)
@@ -528,11 +545,36 @@ describe MediaResource do
         delta_2[:entries].blank?.should == false
         delta_2[:entries].length.should == 2
 
-        pending '包含资源删除的变更信息，格式应当正确'
+        delta_2[:entries][0].should == ['/游戏/网络游戏', nil]
+        delta_2[:entries][1].should == ['/游戏/网络游戏/魔兽世界.zip', nil]
       end
       
       it '不同用户取得各自的delta信息时，不会冲突' do
-        pending '测试方法不好想啊，主要是时间间隔要做出来'
+        cursor_ben7th = MediaResource.delta(@ben7th, nil)[:cursor]
+        cursor_lifei  = MediaResource.delta(@lifei, nil)[:cursor]
+
+        cursor_ben7th.should_not == nil
+        cursor_lifei.should == nil
+
+        Timecop.travel(Time.now + 1.hours)
+        MediaResource.put(@ben7th, '/小说/奇幻/冰与火之歌.zip', file)
+        MediaResource.put(@lifei, '/电影/黑衣人.rmvb', file)
+        delta_ben7th = MediaResource.delta(@ben7th, cursor_ben7th)
+        delta_lifei  = MediaResource.delta(@lifei, cursor_lifei)
+
+        delta_ben7th[:entries].length.should == 3
+        delta_lifei[:entries].length.should == 2
+
+        cursor_ben7th = delta_ben7th[:cursor]
+        cursor_lifei  = delta_lifei[:cursor]
+
+        Timecop.travel(Time.now + 1.hours)
+        MediaResource.put(@lifei, '/电影/阿凡达2.rmvb', file)
+        delta_ben7th = MediaResource.delta(@ben7th, cursor_ben7th)
+        delta_lifei  = MediaResource.delta(@lifei, cursor_lifei)
+
+        delta_ben7th[:entries].length.should == 0
+        delta_lifei[:entries].length.should == 1
       end
     end
   end
