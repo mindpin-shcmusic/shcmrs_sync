@@ -6,7 +6,7 @@ module MediaResourceHelper
     dirs = [@current_dir]
     parent_dir = @current_dir.dir
     while !parent_dir.blank? do
-      dirs < parent_dir
+      dirs << parent_dir
       parent_dir = parent_dir.dir
     end
 
