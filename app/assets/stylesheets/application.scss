@@ -390,19 +390,18 @@ body{
     &.dir a.link{background:url(ico.png) 0px -124px no-repeat;}
     &.file a.link{background:url(ico.png) 0px -603px no-repeat;}
 
-    a.delete{
-      display:none;
-    }
+    a.delete, a.share{display:none;}
 
     .size{font-size:11px;float:right;}
     .time{font-size:11px;float:right;margin-left:20px;}
 
     &:hover{
       background-color:#f1f1f1;
-      a.delete{
+      a.delete, a.share{
         display:block;
         float:left;
         font-size:14px;
+        margin-right:20px;
       }
     }
   }
@@ -455,7 +454,14 @@ body{
     margin-right:20px;
   }
 
-  .logout{
+  .received-shares{
+    border-right:solid 2px #E5E5E5;
+    padding-right:20px;
+    margin-right:20px;
+  }
+  .received-shares, .logout{
     font-size:14px;
+    float:left;
+    margin-right:20px;
   }
 }

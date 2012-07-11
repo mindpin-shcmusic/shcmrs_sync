@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120710013602) do
+ActiveRecord::Schema.define(:version => 20120711020045) do
 
   create_table "file_entities", :force => true do |t|
     t.string   "attach_file_name"
@@ -43,6 +43,14 @@ ActiveRecord::Schema.define(:version => 20120710013602) do
   add_index "media_resources", ["file_entity_id"], :name => "index_media_resources_on_file_entity_id"
   add_index "media_resources", ["fileops_time"], :name => "index_media_resources_on_fileops_time"
   add_index "media_resources", ["name"], :name => "index_media_resources_on_name"
+
+  create_table "media_shares", :force => true do |t|
+    t.integer  "media_resource_id"
+    t.integer  "creator_id"
+    t.integer  "receiver_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "online_records", :force => true do |t|
     t.integer  "user_id"

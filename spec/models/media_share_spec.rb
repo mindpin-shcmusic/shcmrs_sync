@@ -1,5 +1,6 @@
 require 'spec_helper'
 
 describe MediaShare do
-  pending "add some examples to (or delete) #{__FILE__}"
+  pending '不能共享资源给自己'
+  pending '向他人共享资源后，他人可以取到'
 end

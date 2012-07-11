@@ -8,11 +8,12 @@
       klass = resource.is_dir? ? 'dir' : 'file'
       url = File.join('/file', resource.path)
       time = resource.fileops_time.localtime
+      share_url = File.join('/file_share', resource.path)
 
     .media-resource{:class => klass}
       = link_to resource.name, url, :class=>'link'
-      = link_to '删除', url, :method => 'delete', :confirm=>'确定吗？', :class=>'delete'
+      = link_to '删除', url, :method=>'delete', :confirm=>'确定吗？', :class=>'delete'
+      = link_to '共享给其他人', share_url, :class=>'share'
+
       .time.quiet=time
       .size.quiet=media_resource_size_str(resource)
-
-      = link_to '共享给其他人', "/file_share#{resource.path}"

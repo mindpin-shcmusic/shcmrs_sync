@@ -594,7 +594,7 @@ body {
     background: url(ico.png) 0px -124px no-repeat; }
   .page-media-resource-list .media-resource.file a.link {
     background: url(ico.png) 0px -603px no-repeat; }
-  .page-media-resource-list .media-resource a.delete {
+  .page-media-resource-list .media-resource a.delete, .page-media-resource-list .media-resource a.share {
     display: none; }
   .page-media-resource-list .media-resource .size {
     font-size: 11px;
@@ -605,10 +605,11 @@ body {
     margin-left: 20px; }
   .page-media-resource-list .media-resource:hover {
     background-color: #f1f1f1; }
-    .page-media-resource-list .media-resource:hover a.delete {
+    .page-media-resource-list .media-resource:hover a.delete, .page-media-resource-list .media-resource:hover a.share {
       display: block;
       float: left;
-      font-size: 14px; }
+      font-size: 14px;
+      margin-right: 20px; }
 
 .page-media-resources-nav {
   height: 50px;
@@ -646,5 +647,11 @@ body {
     border-right: solid 2px #E5E5E5;
     padding-right: 20px;
     margin-right: 20px; }
-  .page-media-resources-forms .logout {
-    font-size: 14px; }
+  .page-media-resources-forms .received-shares {
+    border-right: solid 2px #E5E5E5;
+    padding-right: 20px;
+    margin-right: 20px; }
+  .page-media-resources-forms .received-shares, .page-media-resources-forms .logout {
+    font-size: 14px;
+    float: left;
+    margin-right: 20px; }
