@@ -1,23 +1,22 @@
-= render 'media_resources/parts/file_menu'
+= render 'media_shares/parts/file_menu'
 
 .page-media-resource-list
-  - unless @@media_resources.any?
+  - unless @media_resources.any?
     .media-resource-blank.quiet
       该目录下没有资源
 
   - else
-  
+
     - @media_resources.each do |resource|
       :ruby
         klass = resource.is_dir? ? 'dir' : 'file'
-        url = File.join('/file', resource.path)
-        time = resource.fileops_time.localtime
+        url = "/media_shares/user/#{resource.creator.id}/file#{resource.path}"
 
       .media-resource{:class => klass}
         = link_to resource.name, url, :class=>'link'
-        = link_to '删除', url, :method => 'delete', :confirm=>'确定吗？', :class=>'delete'
-        .time.quiet=time
-        .size.quiet=media_resource_size_str(resource)
 
-        = link_to '共享给其他人', "/media_shares/new?resource_path=/file#{resource.path}"
+        %span= link_to "#{resource.creator.name}", "/users/#{resource.creator.id}"
+
+        %span= shared_time(current_user, resource)
+        
 

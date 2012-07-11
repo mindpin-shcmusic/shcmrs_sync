@@ -44,6 +44,16 @@ class MediaShare < ActiveRecord::Base
       end
 
 
+      # 取得最上层目录对象
+      def toppest_resource(media_resource)
+        if media_resource.dir_id == 0
+          return media_resource
+        else
+          toppest_resource(media_resource.dir)
+        end
+      end
+      # 结束 toppest_resource
+
     end
   end
 

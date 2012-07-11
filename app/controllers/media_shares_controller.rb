@@ -33,20 +33,19 @@ class MediaSharesController < ApplicationController
 
   # 分享给其它用户目录
   def share
-    pattern = "/media_shares/user/#{current_user.id}/file"
-    resource_path = URI.decode(request.fullpath).sub(pattern, "")
+    resource_path = URI.decode(request.fullpath).sub(/\/media_shares\/user\/.*\/file/, "")
 
-    p 555555555555555555555555555555
-    p URI.decode(request.fullpath)
-    p resource_path
-    p 222222222222222222222222222
-
-    current_resource = MediaResource.get(current_user, resource_path)
+    creator = User.find(params[:id])
+    current_resource = MediaResource.get(creator, resource_path)
 
     if current_resource.is_dir?
       @current_dir = current_resource
       @media_resources = @current_dir.media_resources.web_order
     end
+
+     p 55555
+     p @media_resources
+     p 7777777
     
     if current_resource.is_file?
       return send_file current_resource.attach.path
