@@ -233,4 +233,6 @@ class MediaResource < ActiveRecord::Base
       MediaResource.root_res
     end
   end
+
+  include MediaShare::MediaResourceMethods
 end

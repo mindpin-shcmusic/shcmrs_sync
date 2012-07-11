@@ -17,6 +17,9 @@
 
 
 .page-media-resources-forms
+  %span
+    = link_to "我收到的共享", "/file_my_share"
+
   = form_tag '/', :method => 'put', :multipart => true, :class => 'upload-file' do
     = hidden_field_tag :current_path, @current_dir.blank? ? '/' : @current_dir.path
     = file_field_tag :file

@@ -46,4 +46,32 @@ class MediaResourcesController < ApplicationController
     redirect_to :back
   end
 
+  def share
+    resource_path = URI.decode(request.fullpath).sub('/file_share', '')
+    @current_dir = MediaResource.get(current_user, resource_path)
+
+    @users = User.all    
+  end
+
+  def do_share
+    media_resource = MediaResource.find(params[:media_resource_id])
+
+    MediaShare.destroy_all(:media_resource_id => media_resource.id)
+
+    params[:receivers].each do |receiver_id|
+      MediaShare.create(
+        :creator => current_user,
+        :receiver_id => receiver_id,
+        :media_resource => media_resource
+      )
+    end
+ 
+    redirect_to :back
+
+  end
+
+  def my_share
+    @received_resources = current_user.received_shared_media_resources
+  end
+
 end

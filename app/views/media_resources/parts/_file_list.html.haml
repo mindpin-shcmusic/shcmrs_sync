@@ -14,3 +14,5 @@
       = link_to '删除', url, :method => 'delete', :confirm=>'确定吗？', :class=>'delete'
       .time.quiet=time
       .size.quiet=media_resource_size_str(resource)
+
+      = link_to '共享给其他人', "/file_share#{resource.path}"
