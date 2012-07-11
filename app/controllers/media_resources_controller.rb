@@ -9,15 +9,16 @@ class MediaResourcesController < ApplicationController
 
   def file
     resource_path = URI.decode(request.fullpath).sub('/file', '')
-    @current_resource = MediaResource.get(current_user, resource_path)
+    current_resource = MediaResource.get(current_user, resource_path)
 
-    if @current_resource.is_dir?
-      @media_resources = @current_resource.media_resources.web_order
+    if current_resource.is_dir?
+      @current_dir = current_resource
+      @media_resources = @current_dir.media_resources.web_order
       return render :action => 'index'
     end
     
     if @current_resource.is_file?
-      return send_file @current_resource.attach.path
+      return send_file current_resource.attach.path
     end
   end
 
