@@ -17,7 +17,7 @@ class MediaResourcesController < ApplicationController
       return render :action => 'index'
     end
     
-    if @current_resource.is_file?
+    if current_resource.is_file?
       return send_file current_resource.attach.path
     end
   end
