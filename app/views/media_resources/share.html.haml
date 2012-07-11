@@ -1,0 +1,11 @@
+= render 'media_resources/parts/file_menu'
+
+= form_tag '/file_do_share', :method => 'post', :class => 'create' do
+  = hidden_field_tag :media_resource_id, @current_dir.blank? ? '/' : @current_dir.id
+  %ul
+    - @users.each do |user|
+      %li
+        = check_box_tag 'receivers[]', user.id, false, {:id => "user_#{user.id}"}
+        = user.name
+
+  = submit_tag "共享"

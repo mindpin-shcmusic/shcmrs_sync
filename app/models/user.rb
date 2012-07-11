@@ -43,5 +43,7 @@ class User < ActiveRecord::Base
     self.salt = "#{self.object_id}#{rand}"
     self.hashed_password = self.encrypted_password(self.password)
   end
+
+  include MediaShare::UserMethods
   
 end

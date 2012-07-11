@@ -1,0 +1,23 @@
+= render 'media_resources/parts/file_menu'
+
+.page-media-resource-list
+  - unless @received_resources.any?
+    .media-resource-blank.quiet
+      该目录下没有资源
+
+  - else
+
+    - @received_resources.each do |resource|
+      :ruby
+        klass = resource.is_dir? ? 'dir' : 'file'
+        url = File.join('/file', resource.path)
+        time = resource.fileops_time.localtime
+
+      .media-resource{:class => klass}
+        = link_to resource.name, url, :class=>'link'
+        = link_to '删除', url, :method => 'delete', :confirm=>'确定吗？', :class=>'delete'
+        .time.quiet=time
+        .size.quiet=media_resource_size_str(resource)
+
+        = link_to '共享给其他人', "/file_share#{resource.path}"
+
