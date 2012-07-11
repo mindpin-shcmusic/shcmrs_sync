@@ -15,4 +15,4 @@
       .time.quiet=time
       .size.quiet=media_resource_size_str(resource)
 
-      = link_to '共享给其他人', "/file_share#{resource.path}"
+      = link_to '共享给其他人', "/media_shares/new?resource_path=/file#{resource.path}"

@@ -25,6 +25,25 @@ class MediaShare < ActiveRecord::Base
     def self.included(base)
       base.has_many :media_shares
       base.has_many :shared_receivers, :through => :media_shares, :source => :receiver
+
+      base.send(:include, InstanceMethods)
+    end
+
+    module InstanceMethods
+      
+      # 判断是否已经分享给该用户
+      def shared_to?(user)
+        receivers = self.shared_receivers
+        receivers.each do |receiver|
+          if receiver == user
+            return true
+          end
+          return false
+        end
+      # 结束 shared_to
+      end
+
+
     end
   end
 

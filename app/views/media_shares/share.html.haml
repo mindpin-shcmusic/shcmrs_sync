@@ -1,13 +1,13 @@
 = render 'media_resources/parts/file_menu'
 
 .page-media-resource-list
-  - unless @received_resources.any?
+  - unless @@media_resources.any?
     .media-resource-blank.quiet
       该目录下没有资源
 
   - else
-
-    - @received_resources.each do |resource|
+  
+    - @media_resources.each do |resource|
       :ruby
         klass = resource.is_dir? ? 'dir' : 'file'
         url = File.join('/file', resource.path)
@@ -19,5 +19,5 @@
         .time.quiet=time
         .size.quiet=media_resource_size_str(resource)
 
-        = link_to '共享给其他人', "/file_share#{resource.path}"
+        = link_to '共享给其他人', "/media_shares/new?resource_path=/file#{resource.path}"
 
