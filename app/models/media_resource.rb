@@ -241,4 +241,16 @@ class MediaResource < ActiveRecord::Base
   end
 
   include MediaShare::MediaResourceMethods
+
+  # -------------- 这段需要放在最后，否则因为类加载顺序，会有警告信息
+  # 设置全文索引字段
+  define_index do
+    # fields
+    indexes name, :sortable => true
+    
+    # attributes
+    has created_at, updated_at
+
+    set_property :delta => true
+  end
 end

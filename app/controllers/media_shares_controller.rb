@@ -51,6 +51,7 @@ class MediaSharesController < ApplicationController
     end
   end
 
+  # 显示某个用户共享给我的资源
   def shared_by
     creator = User.find(params[:user_id])
     shared_resources = current_user.shared_res_by_user(creator)
@@ -62,5 +63,14 @@ class MediaSharesController < ApplicationController
 
     render :action => "share"
   end
+
+  # 搜索共享资源
+  def search
+    @keyword = params[:keyword]
+    @media_resources = MediaResource.search(@keyword, 
+      :conditions => {:creator_id => current_user.id}, 
+      :page => params[:page], :per_page => 20)
+  end
+
 
 end
