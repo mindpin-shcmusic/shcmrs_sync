@@ -247,6 +247,7 @@ class MediaResource < ActiveRecord::Base
   define_index do
     # fields
     indexes name, :sortable => true
+    indexes creator_id
     
     # attributes
     has created_at, updated_at
