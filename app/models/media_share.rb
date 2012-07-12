@@ -34,12 +34,17 @@ class MediaShare < ActiveRecord::Base
       # 判断是否已经分享给该用户
       def shared_to?(user)
         receivers = self.shared_receivers
-        receivers.each do |receiver|
-          if receiver == user
-            return true
-          end
-          return false
+
+        if receivers.any?
+          receivers.each do |receiver|
+            if receiver == user
+              return true
+            end
+          end         
         end
+
+        return false
+        
       # 结束 shared_to
       end
 
