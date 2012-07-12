@@ -29,6 +29,9 @@ class MediaSharesController < ApplicationController
 
   def my
     @received_resources = current_user.received_shared_media_resources
+
+    # 共享给我的用户列表
+    @shared_users = current_user.shared_res_users
   end
 
   # 分享给其它用户目录
@@ -42,13 +45,22 @@ class MediaSharesController < ApplicationController
       @current_dir = current_resource
       @media_resources = @current_dir.media_resources.web_order
     end
-
-     p 55555
-     p @media_resources
-     p 7777777
     
     if current_resource.is_file?
       return send_file current_resource.attach.path
     end
   end
+
+  def shared_by
+    creator = User.find(params[:user_id])
+    shared_resources = current_user.shared_res_by_user(creator)
+
+    @media_resources = []
+    shared_resources.each do |shared|
+      @media_resources << shared.media_resource
+    end
+
+    render :action => "share"
+  end
+
 end

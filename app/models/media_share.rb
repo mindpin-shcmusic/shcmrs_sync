@@ -16,7 +16,25 @@ class MediaShare < ActiveRecord::Base
       base.has_many :created_media_shares, :class_name => 'MediaShare', :foreign_key => :creator_id
       base.has_many :created_shared_media_resources, :through => :created_media_shares, :source => :media_resource
 
+      base.send(:include, InstanceMethods)
     end
+
+    module InstanceMethods
+      def shared_res_users
+        MediaShare.where("receiver_id = ?", self.id).group("creator_id")
+      end
+
+      def shared_res_count(user)
+        res = MediaShare.select("count(id) as count").where("receiver_id = ? and creator_id = ?", self.id, user.id).first
+        res.count
+      end
+
+      def shared_res_by_user(user)
+        MediaShare.where("creator_id = ? and receiver_id = ?", user.id, self.id)
+      end
+
+    end
+
   end
 
 

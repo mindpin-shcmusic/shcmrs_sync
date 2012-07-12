@@ -27,6 +27,7 @@ Voteapp::Application.routes.draw do
     end
   end
   get    '/media_shares/user/:id/file/*path'            => 'media_shares#share'
+  get    '/media_shares/shared_by/:user_id'            => 'media_shares#shared_by'
 
   # api
   get    '/api/file/*path'            => 'media_resources_api#get_file'
