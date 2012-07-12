@@ -1,0 +1,16 @@
+.page-media-shared-resource-list
+  - if resources.blank?
+    .media-resource-blank.quiet
+      该共享目录下没有资源
+  - else
+    - resources.each do |resource|
+      :ruby
+        klass = resource.is_dir? ? 'dir' : 'file'
+        url = "/media_shares/user/#{resource.creator.id}/file#{resource.path}"
+      .media-resource{:class => klass}
+        = link_to resource.name, url, :class=>'link'
+        .from-creator
+          %span 来自
+          %span= link_to "#{resource.creator.name}", "/users/#{resource.creator.id}"
+
+        .time.quiet= shared_time(current_user, resource)

@@ -40,6 +40,33 @@ body{
       text-shadow:1px 1px 2px black;
     }
   }
+
+  .page-sidebar{
+    position:fixed;
+    z-index:100;
+    top:0;bottom:0;
+    left:0;width:225px;
+    background-color:#0F639F;
+    padding-top:70px;
+
+    a{
+      height:70px;line-height:70px;
+      font-weight:bold;
+      color:white;
+      display:block;
+      padding:0 20px;
+      text-align:right;
+      font-size:14px;
+      &:hover{
+        color:white;
+        background-color:#0B73BD;
+        text-decoration:none;
+      }
+      &.current{
+        background-color:#4A96CC;
+      }
+    }
+  }
   
   .page-content{
     margin:20px 20px 20px 245px;
@@ -49,7 +76,6 @@ body{
       position:absolute;
       top:0;bottom:0;
       left:0;width:225px;
-      background-color:#0F639F;
     }
 
 
@@ -407,6 +433,16 @@ body{
   }
 }
 
+.page-media-shared-resource-list{
+  @extend .page-media-resource-list;
+
+  .media-resource{
+    .from-creator{
+      font-size:14px;float:left;
+    }
+  }
+}
+
 .page-media-resources-nav{
     height:50px;line-height:50px;
     border-bottom:solid 1px #E5E5E5;
@@ -446,12 +482,14 @@ body{
     border-right:solid 2px #E5E5E5;
     padding-right:20px;
     margin-right:20px;
+    height:30px;line-height:30px;
   }
 
   form.create-folder{
     border-right:solid 2px #E5E5E5;
     padding-right:20px;
     margin-right:20px;
+    height:30px;line-height:30px;
   }
 
   .received-shares{
@@ -459,9 +497,11 @@ body{
     padding-right:20px;
     margin-right:20px;
   }
+
   .received-shares, .logout{
     font-size:14px;
     float:left;
     margin-right:20px;
+    height:30px;line-height:30px;
   }
 }

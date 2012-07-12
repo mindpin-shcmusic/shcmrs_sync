@@ -5,10 +5,7 @@
       jQuery('form.upload-file input[type=file]').change(function() {
         var form_elm = jQuery(this).closest('form');
 
-        var value = jQuery(this).val().replace(/\\/g, '/');
-        var arr = value.split('/');
-        var filename = arr[arr.length - 1];
-
+        var filename = jQuery(this).val();
         var current_path = form_elm.find('input[name=current_path]').val();
         var resource_path = current_path + '/' + filename;
         resource_path = resource_path.replace(/\/\//, '/')
@@ -18,9 +15,6 @@
       });
     });
 
-
-.warning{:style=>'color:red;font-weight:bold;font-size:48px;'}
-  这是原型工程，不要传大文件，传不了，很吃内存
 
 .page-media-resources-forms
 
@@ -37,7 +31,6 @@
 
   = flash[:error]
 
-  .received-shares=link_to '我收到的共享', '/file_my_share'
   .logout=link_to '退出','/logout'
 
 .page-media-resources-nav

@@ -20,8 +20,13 @@ Voteapp::Application.routes.draw do
   delete '/file/*path' => 'media_resources#destroy'
 
   get    '/file_share/*path'       => 'media_resources#share'
-  post    '/file_do_share'       => 'media_resources#do_share' 
-  get    '/file_my_share'       => 'media_resources#my_share'
+  
+  resources :media_shares do
+    collection do
+      get :my
+    end
+  end
+  get    '/media_shares/user/:id/file/*path'            => 'media_shares#share'
 
   # api
   get    '/api/file/*path'            => 'media_resources_api#get_file'

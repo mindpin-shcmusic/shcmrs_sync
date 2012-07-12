@@ -286,6 +286,30 @@ body {
       font-weight: bold;
       padding: 0 40px;
       text-shadow: 1px 1px 2px black; }
+  body .page-sidebar {
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 225px;
+    background-color: #0F639F;
+    padding-top: 70px; }
+    body .page-sidebar a {
+      height: 70px;
+      line-height: 70px;
+      font-weight: bold;
+      color: white;
+      display: block;
+      padding: 0 20px;
+      text-align: right;
+      font-size: 14px; }
+      body .page-sidebar a:hover {
+        color: white;
+        background-color: #0B73BD;
+        text-decoration: none; }
+      body .page-sidebar a.current {
+        background-color: #4A96CC; }
   body .page-content {
     margin: 20px 20px 20px 245px; }
     body .page-content:before {
@@ -294,8 +318,7 @@ body {
       top: 0;
       bottom: 0;
       left: 0;
-      width: 225px;
-      background-color: #0F639F; }
+      width: 225px; }
     body .page-content table {
       border-spacing: 0;
       border-collapse: collapse;
@@ -571,45 +594,49 @@ body {
       border-color: #952216;
       text-decoration: none; }
 
-.page-media-resource-list .media-resource-blank {
+.page-media-resource-list .media-resource-blank, .page-media-shared-resource-list .media-resource-blank {
   height: 28px;
   line-height: 28px;
   padding: 11px;
   border-bottom: solid 1px #E5E5E5; }
-.page-media-resource-list .media-resource {
+.page-media-resource-list .media-resource, .page-media-shared-resource-list .media-resource {
   height: 28px;
   line-height: 28px;
   padding: 11px;
   border-bottom: solid 1px #E5E5E5; }
-  .page-media-resource-list .media-resource a.link {
+  .page-media-resource-list .media-resource a.link, .page-media-shared-resource-list .media-resource a.link {
     float: left;
     height: 28px;
     padding-left: 46px;
     font-size: 14px;
     color: #444;
     margin-right: 20px; }
-    .page-media-resource-list .media-resource a.link:hover {
+    .page-media-resource-list .media-resource a.link:hover, .page-media-shared-resource-list .media-resource a.link:hover {
       color: #444; }
-  .page-media-resource-list .media-resource.dir a.link {
+  .page-media-resource-list .media-resource.dir a.link, .page-media-shared-resource-list .media-resource.dir a.link {
     background: url(ico.png) 0px -124px no-repeat; }
-  .page-media-resource-list .media-resource.file a.link {
+  .page-media-resource-list .media-resource.file a.link, .page-media-shared-resource-list .media-resource.file a.link {
     background: url(ico.png) 0px -603px no-repeat; }
-  .page-media-resource-list .media-resource a.delete, .page-media-resource-list .media-resource a.share {
+  .page-media-resource-list .media-resource a.delete, .page-media-shared-resource-list .media-resource a.delete, .page-media-resource-list .media-resource a.share, .page-media-shared-resource-list .media-resource a.share {
     display: none; }
-  .page-media-resource-list .media-resource .size {
+  .page-media-resource-list .media-resource .size, .page-media-shared-resource-list .media-resource .size {
     font-size: 11px;
     float: right; }
-  .page-media-resource-list .media-resource .time {
+  .page-media-resource-list .media-resource .time, .page-media-shared-resource-list .media-resource .time {
     font-size: 11px;
     float: right;
     margin-left: 20px; }
-  .page-media-resource-list .media-resource:hover {
+  .page-media-resource-list .media-resource:hover, .page-media-shared-resource-list .media-resource:hover {
     background-color: #f1f1f1; }
-    .page-media-resource-list .media-resource:hover a.delete, .page-media-resource-list .media-resource:hover a.share {
+    .page-media-resource-list .media-resource:hover a.delete, .page-media-shared-resource-list .media-resource:hover a.delete, .page-media-resource-list .media-resource:hover a.share, .page-media-shared-resource-list .media-resource:hover a.share {
       display: block;
       float: left;
       font-size: 14px;
       margin-right: 20px; }
+
+.page-media-shared-resource-list .media-resource .from-creator {
+  font-size: 14px;
+  float: left; }
 
 .page-media-resources-nav {
   height: 50px;
@@ -642,11 +669,15 @@ body {
   .page-media-resources-forms form.upload-file {
     border-right: solid 2px #E5E5E5;
     padding-right: 20px;
-    margin-right: 20px; }
+    margin-right: 20px;
+    height: 30px;
+    line-height: 30px; }
   .page-media-resources-forms form.create-folder {
     border-right: solid 2px #E5E5E5;
     padding-right: 20px;
-    margin-right: 20px; }
+    margin-right: 20px;
+    height: 30px;
+    line-height: 30px; }
   .page-media-resources-forms .received-shares {
     border-right: solid 2px #E5E5E5;
     padding-right: 20px;
@@ -654,4 +685,6 @@ body {
   .page-media-resources-forms .received-shares, .page-media-resources-forms .logout {
     font-size: 14px;
     float: left;
-    margin-right: 20px; }
+    margin-right: 20px;
+    height: 30px;
+    line-height: 30px; }
