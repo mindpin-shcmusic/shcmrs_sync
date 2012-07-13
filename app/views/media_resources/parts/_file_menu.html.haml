@@ -5,7 +5,10 @@
       jQuery('form.upload-file input[type=file]').change(function() {
         var form_elm = jQuery(this).closest('form');
 
-        var filename = jQuery(this).val();
+        var value = jQuery(this).val().replace(/\\/g, '/');
+        var arr = value.split('/');
+        var filename = arr[arr.length - 1];
+
         var current_path = form_elm.find('input[name=current_path]').val();
         var resource_path = current_path + '/' + filename;
         resource_path = resource_path.replace(/\/\//, '/')
@@ -14,7 +17,6 @@
         console.log('/api/file_put' + resource_path)
       });
     });
-
 
 .page-media-resources-forms
 
@@ -46,4 +48,3 @@
     %span= link_to '根目录', '/file'
     - media_resource_navs_dirs(@current_dir).each do |dir|
       %span= link_to dir.name, File.join('/file', dir.path)
-
