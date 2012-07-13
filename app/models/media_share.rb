@@ -19,7 +19,25 @@ class MediaShare < ActiveRecord::Base
       base.has_many :created_media_shares, :class_name => 'MediaShare', :foreign_key => :creator_id
       base.has_many :created_shared_media_resources, :through => :created_media_shares, :source => :media_resource
 
+      base.send(:include, InstanceMethods)
     end
+
+    module InstanceMethods
+      def shared_res_users
+        MediaShare.where("receiver_id = ?", self.id).group("creator_id")
+      end
+
+      def shared_res_count(user)
+        res = MediaShare.select("count(id) as count").where("receiver_id = ? and creator_id = ?", self.id, user.id).first
+        res.count
+      end
+
+      def shared_res_by_user(user)
+        MediaShare.where("creator_id = ? and receiver_id = ?", user.id, self.id)
+      end
+
+    end
+
   end
 
 
@@ -37,12 +55,17 @@ class MediaShare < ActiveRecord::Base
       # 判断是否已经分享给该用户
       def shared_to?(user)
         receivers = self.shared_receivers
-        receivers.each do |receiver|
-          if receiver == user
-            return true
-          end
-          return false
+
+        if receivers.any?
+          receivers.each do |receiver|
+            if receiver == user
+              return true
+            end
+          end         
         end
+
+        return false
+        
       # 结束 shared_to
       end
 
@@ -58,6 +81,19 @@ class MediaShare < ActiveRecord::Base
       # 结束 toppest_resource
 
     end
+  end
+
+
+  # 设置全文索引字段
+  define_index do
+    # fields
+    indexes media_resource.name
+    indexes receiver_id
+    
+    # attributes
+    has created_at, updated_at
+
+    set_property :delta => true
   end
 
 end

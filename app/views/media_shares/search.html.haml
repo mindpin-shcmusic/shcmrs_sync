@@ -1,0 +1,7 @@
+=render 'media_shares/parts/search'
+
+= render 'media_shares/parts/file_menu'
+
+%div
+  = "搜索到 #{@media_resources.length} 条"
+= render 'media_shares/parts/file_list', :resources => @media_resources

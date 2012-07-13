@@ -9,6 +9,8 @@ gem 'therubyracer'
 gem 'jquery-rails'
 gem 'juggernaut'
 gem 'redis'
+gem 'thinking-sphinx', '2.0.10'
+gem 'rmmseg-cpp'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'

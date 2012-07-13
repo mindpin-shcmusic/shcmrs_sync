@@ -48,4 +48,13 @@ class MediaResourcesController < ApplicationController
     redirect_to :back
   end
 
+  # 搜索当前登录用户资源
+  def search
+    @keyword = params[:keyword]
+    @media_resources = MediaResource.search(@keyword, 
+      :conditions => {:creator_id => current_user.id}, 
+      :page => params[:page], :per_page => 20)
+
+  end
+
 end
