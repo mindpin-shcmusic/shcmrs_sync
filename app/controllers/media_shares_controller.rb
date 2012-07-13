@@ -27,8 +27,9 @@ class MediaSharesController < ApplicationController
 
   end
 
-  def my
+  def mine
     @received_resources = current_user.received_shared_media_resources
+    UserShareTipMessage.clear current_user
   end
 
   # 分享给其它用户目录

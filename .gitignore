@@ -8,3 +8,4 @@ tmp/
 public/system/*
 Gemfile.lock
 coverage/
+.idea/

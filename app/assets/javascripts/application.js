@@ -1,5 +1,6 @@
 //= require jquery
 //= require jquery_ujs
+//= require notifier
 //= require_tree .
 
 // show

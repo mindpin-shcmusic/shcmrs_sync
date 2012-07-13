@@ -23,7 +23,7 @@ Voteapp::Application.routes.draw do
   
   resources :media_shares do
     collection do
-      get :my
+      get :mine
     end
   end
   get    '/media_shares/user/:id/file/*path'            => 'media_shares#share'

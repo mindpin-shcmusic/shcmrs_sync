@@ -8,9 +8,10 @@
 %html{:lang=>'zh'}
   %head
     %meta{:charset=>'utf-8'}
+    %meta{:'current-user-id' => current_user.id}
     %title=title
     = csrf_meta_tags
-    = stylesheet_link_tag 'application'
+    = stylesheet_link_tag 'application', 'share_message'
     = yield :css
     = yield :head
 
@@ -21,9 +22,14 @@
           .title=title
         .page-sidebar
           %a.file{:href=>'/file', :class=>request.path.starts_with?('/file') ? 'current' : ''} 我的个人文件夹
-          %a.share{:href=>'/media_shares/my', :class=>request.path.starts_with?('/media_shares') ? 'current' : ''} 我收到的共享
+          %a.share{:href=>'/media_shares/mine', :class=>request.path.starts_with?('/media_shares') ? 'current' : ''} 我收到的共享
         .page-content
           = yield
 
-    = javascript_include_tag 'application'
+    .notifiers{:style => UserShareTipMessage.count(current_user) > 0? nil : 'display:none;'}
+      .media-share-notifier{:'data-count' => UserShareTipMessage.count(current_user)}
+        .content #{UserShareTipMessage.count(current_user)}个新文件分享
+        = link_to '查看', UserShareTipMessage.url(current_user)
+
+    = javascript_include_tag 'http://localhost:8080/application.js', 'application'
     = yield :javascript
