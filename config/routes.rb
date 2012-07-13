@@ -24,9 +24,15 @@ Voteapp::Application.routes.draw do
   resources :media_shares do
     collection do
       get :my
+      get :search
     end
   end
-  get    '/media_shares/user/:id/file/*path'            => 'media_shares#share'
+  get    '/media_shares/user/:id/file/*path'     => 'media_shares#share'
+  get    '/media_shares/shared_by/:user_id'      => 'media_shares#shared_by'
+
+  # 全文索引
+  get    '/file_search'            => 'media_resources#search'
+  # 结束全文索引
 
   # api
   get    '/api/file/*path'            => 'media_resources_api#get_file'

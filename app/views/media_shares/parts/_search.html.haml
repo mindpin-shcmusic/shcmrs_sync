@@ -1,0 +1,5 @@
+.page-wiki-search
+  %form{:action => "/media_shares/search", :method => "get", :name => ""}
+    .field
+      %input{:name => "keyword", :type => "text", :value => @keyword || ''}
+      %a.form-submit-button{:href=>'javascript:;'} 搜索

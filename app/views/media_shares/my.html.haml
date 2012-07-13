@@ -1,3 +1,11 @@
+=render 'media_shares/parts/search'
+
+
 = render 'media_shares/parts/file_menu'
 = render 'media_shares/parts/file_list', :resources => @received_resources
 
+%ul
+  - @shared_users.each do |shared|
+    %li
+      = link_to shared.creator.name, "/media_shares/shared_by/#{shared.creator.id}"
+      %span= current_user.shared_res_count(shared.creator)

@@ -1,4 +1,7 @@
-=render 'media_resources/parts/search', :product=>@product
+=render 'media_resources/parts/search'
 
 = render 'media_resources/parts/file_menu'
+
+%div
+  = "搜索到 #{@media_resources.length} 条"
 = render 'media_resources/parts/file_list', :resources => @media_resources
