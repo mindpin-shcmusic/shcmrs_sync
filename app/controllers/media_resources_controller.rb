@@ -50,7 +50,7 @@ class MediaResourcesController < ApplicationController
   def search
     @keyword = params[:keyword]
     @media_resources = MediaResource.search(@keyword, 
-      :conditions => {:creator_id => current_user.id, :is_removed => false}, 
+      :conditions => {:creator_id => current_user.id, :is_removed => 0}, 
       :page => params[:page], :per_page => 20)
 
   end
