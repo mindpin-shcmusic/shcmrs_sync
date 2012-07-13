@@ -8,4 +8,5 @@ tmp/
 public/system/*
 Gemfile.lock
 coverage/
-.idea/
+.idea/*
+config/database.yml
