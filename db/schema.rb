@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120712082753) do
+ActiveRecord::Schema.define(:version => 20120713014107) do
 
   create_table "file_entities", :force => true do |t|
     t.string   "attach_file_name"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(:version => 20120712082753) do
     t.integer  "receiver_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "delta",             :default => true, :null => false
   end
 
   create_table "online_records", :force => true do |t|

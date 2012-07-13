@@ -80,4 +80,17 @@ class MediaShare < ActiveRecord::Base
     end
   end
 
+
+  # 设置全文索引字段
+  define_index do
+    # fields
+    indexes media_resource.name
+    indexes receiver_id
+    
+    # attributes
+    has created_at, updated_at
+
+    set_property :delta => true
+  end
+
 end
