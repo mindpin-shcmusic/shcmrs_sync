@@ -5,7 +5,7 @@ development:
   encoding: utf8
   database: pin-shcmrs-sync 
   username: root
-  password: root 
+  password: '111111' 
   host: localhost
 
 test:
@@ -13,5 +13,5 @@ test:
   encoding: utf8
   database: pin-shcmrs-sync-test
   username: root
-  password: root
+  password: '111111'
   host: localhost
