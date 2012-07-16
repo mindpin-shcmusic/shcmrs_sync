@@ -1,4 +1,39 @@
-=render 'media_resources/parts/search', :product=>@product
+.page-media-resource-head
+  =render 'media_resources/parts/search_bar'
+  =render 'media_resources/parts/forms'
 
-= render 'media_resources/parts/file_menu'
-= render 'media_resources/parts/file_list', :resources => @media_resources
+.page-media-resource-nav
+  .go-parent-dir
+    - if @current_dir.blank?
+      %span.quiet 上一级
+    - else
+      :ruby
+        url = @current_dir.dir.blank? ? '/file' : File.join('/file', @current_dir.dir.path)
+      %a{:href => url} 上一级
+
+  .navs
+    %span= link_to '根目录', '/file'
+    - media_resource_navs_dirs(@current_dir).each do |dir|
+      %span= link_to dir.name, File.join('/file', dir.path)
+
+.page-media-resource-list
+  - resources = @media_resources
+
+  - if resources.blank?
+    .media-resource-blank.quiet
+      该目录下没有资源
+
+  - resources.each do |resource|
+    :ruby
+      klass = resource.is_dir? ? 'dir' : 'file'
+      url = File.join('/file', resource.path)
+      time = resource.fileops_time.localtime
+      share_url = "/media_shares/new?resource_path=/file#{resource.path}"
+
+    .media-resource{:class => klass}
+      = link_to resource.name, url, :class=>'link'
+      = link_to '删除', url, :method=>'delete', :confirm=>'确定吗？', :class=>'delete'
+      = link_to '共享给其他人', share_url, :class=>'share'
+
+      .time.quiet=time
+      .size.quiet=media_resource_size_str(resource)

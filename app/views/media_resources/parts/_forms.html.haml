@@ -1,0 +1,12 @@
+.page-media-resources-forms
+  = flash[:error]
+
+  = form_tag '/', :method => 'put', :multipart => true, :class => 'upload-file' do
+    = hidden_field_tag :current_path, @current_dir.blank? ? '/' : @current_dir.path
+    = file_field_tag :file
+    %a.form-submit-button 上传文件
+    
+  = form_tag '/file/create_folder', :method => 'post', :class => 'create-folder' do
+    = hidden_field_tag :current_path, @current_dir.blank? ? '/' : @current_dir.path
+    = text_field_tag :folder
+    %a.form-submit-button 创建文件夹

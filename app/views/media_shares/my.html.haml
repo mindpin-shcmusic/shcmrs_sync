@@ -1,11 +1,11 @@
-=render 'media_shares/parts/search'
+.page-media-resource-head
+  = render 'media_shares/parts/search_bar'
 
-
-= render 'media_shares/parts/file_menu'
+= render 'media_shares/parts/nav'
 = render 'media_shares/parts/file_list', :resources => @received_resources
 
-%ul
+.media-share-shared-user
   - @shared_users.each do |shared|
-    %li
+    .shared-user
       = link_to shared.creator.name, "/media_shares/shared_by/#{shared.creator.id}"
-      %span= current_user.shared_res_count(shared.creator)
+      %span 共享了 #{current_user.shared_res_count(shared.creator)} 个资源

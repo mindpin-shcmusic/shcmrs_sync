@@ -20,8 +20,10 @@
         .page-header
           .title=title
         .page-sidebar
-          %a.file{:href=>'/file', :class=>request.path.starts_with?('/file') ? 'current' : ''} 我的个人文件夹
-          %a.share{:href=>'/media_shares/my', :class=>request.path.starts_with?('/media_shares') ? 'current' : ''} 我收到的共享
+          -if logged_in?
+            %a.file{:href=>'/file', :class=>request.path.starts_with?('/file') ? 'current' : ''} 我的个人文件夹
+            %a.share{:href=>'/media_shares/my', :class=>request.path.starts_with?('/media_shares') ? 'current' : ''} 我收到的共享
+            %a.logout{:href=>'/logout'} 退出登录
         .page-content
           = yield
 
