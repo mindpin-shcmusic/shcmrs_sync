@@ -1,0 +1,250 @@
+.page-media-file-uploader{
+  .upload-drop-area{
+    border-bottom:solid 1px #bdbdbd;
+    border-right:solid 1px #bdbdbd;
+    background-color:#FFFAE8;
+    padding:24px;
+    position:relative;
+
+    .upload-btn-box{
+      margin-bottom:24px;
+      width:100px;
+      height:38px;
+      position:relative;
+      overflow:hidden;
+
+      .upload-btn{
+        display:block;
+        height:36px;line-height:36px;
+        width:98px;
+        //@include gradient(#DD4B39, #C53727);
+        //@include gradient(#FB7748, #FB4404);
+        @include gradient(#fda034, #FF8201);
+        border:1px solid rgba(black, 0.2);
+        @include border-radius(3px);
+        color:white;text-align: center;
+        text-shadow:0 -1px 1px rgba(black, 0.3);
+        font-size:14px;font-weight: bold;
+        // &:hover{
+        //   @include gradient(#FB7748, #FB7748);
+        //   border-color:#952216;
+        //   text-decoration:none;
+        // }
+      }
+      input[type=file]{
+        position:absolute;
+        top:0;right:0;
+        font-size:118px;
+        opacity:0;
+        cursor:pointer;
+      }
+    }
+    .desc{
+      height:38px;line-height:38px;
+      position:absolute;
+      top:24px;left:148px;
+    }
+
+    .tip{
+      height:80px;line-height:80px;
+      border:dashed 2px rgba(black, 0.2);
+      padding:12px;
+      font-size:14px;font-weight: bold;
+      text-align:center;
+      color:rgba(black, 0.6);
+      background-color:rgba(black, 0.04);
+      @include border-radius(3px);
+      .t2{display:none;}
+
+      &.dragover{
+        background-color:rgba(#6BACEB, 0.6);
+        color:white;
+        text-shadow:0 -1px 1px rgba(black, 0.3);
+        border-color:rgba(white, 0.4);
+        .t1{display:none;}
+        .t2{display:block;}
+      }
+    }
+  }
+
+  .uploading-files-list, .progress-bar-sample{
+    .file{
+      padding:12px 84px 12px 24px;
+      border-bottom:solid 1px #bdbdbd;
+      border-right:solid 1px #bdbdbd;
+      position:relative;
+      @include numfont;
+      @include transition(all ease-in .2s);
+
+      &.error{
+        background-color:#333;
+        $c1 : white;
+        $c2 : #ccc;
+        //background-color:mix(#DC4A38, white, 10%);
+        //$c1:#B0281A;
+        //$c2:mix(white, #B0281A, 20%);
+        .meta{
+          .name{color:$c2;};
+          .size{color:$c2;};
+        }
+        .bar{
+          background:#999;
+          //box-shadow:none;
+          .percent{display:none;}
+          .p{
+            background:rgba(black, 0.6);
+            //&:before{display:none;}
+          }
+        }
+        .stat{
+          display:none;
+        }
+        .error-info{
+          display:block;
+          color:$c1;font-weight:bold;
+        }
+      }
+
+      .meta{
+        overflow:hidden;
+        margin-bottom:6px;
+        .name, .size{
+          height:20px;line-height:20px;
+        }
+        .name{float:left;font-weight:bold;font-size:14px;margin-right:14px;}
+        .size{float:left;color:#444;}
+      }
+      .bar{
+        height:16px;
+        @include border-radius(3px);
+        //@include gradient(rgba(black, 0.3), rgba(black, 0.2));
+        background-color:#bbb;
+        position:relative;
+        margin-bottom:4px;
+        overflow:hidden;
+        box-shadow:0 0 2px rgba(black, 0.6) inset;
+
+        .percent{
+          position:absolute;
+          left:0;right:0;
+          height:16px;line-height:16px;
+          font-size:10px;
+          text-align: center;
+          color:black;font-weight: bold;
+          text-shadow:0 0 2px white;
+          @include base-font-family;
+        }
+        .p{
+          height:16px;
+          $c1 : lighten(#55A4F2, 10%);
+          $c2 : lighten(#1071D1, 10%);
+
+          @include gradient($c1, $c2);
+          box-shadow:0 0 2px rgba(black, 0.6) inset;
+          &:before{
+            content:"";
+            display:block;
+            height:8px;
+            @include gradient(rgba(white, 0.2), rgba(white, 0.1));
+          }
+        }
+      }
+      .stat{
+        overflow:hidden;
+        color:#666;
+        .speed{float:left;margin-right:12px;}
+        .remaining-time{float:left;}
+      }
+      .error-info{
+        display:none;
+      }
+      .ops{
+        position:absolute;
+        top:33px;right:24px;
+        overflow:hidden;
+
+        &.running{
+          a.pause{display:block;}
+          a.start{display:none;}
+        }
+
+        &.pause{
+          a.pause{display:none;}
+          a.start{display:block;}
+        }
+
+        a{
+          float:left;
+          width:24px;height:24px;
+          @include border-radius(2px);
+          //margin-right:3px;
+          overflow:hidden;
+          border:solid 1px transparent;
+          line-height:20em;
+          position:relative;
+          //background-color:#fff;
+
+          &:hover{
+            border:1px solid #ADADAD;
+            @include gradient(white, #F3F3F3);
+          }
+
+          &.pause{
+            &:before{
+              content:"";
+              height:14px;width:3px;
+              @include border-radius(4px);
+              background-color:#666;
+              position:absolute;
+              top:5px;left:7px;
+              //box-shadow:0 0 1px black inset;
+            }
+            &:after{
+              content:"";
+              height:14px;width:3px;
+              @include border-radius(4px);
+              background-color:#666;
+              position:absolute;
+              top:5px;right:7px;
+              //box-shadow:0 0 1px black inset;
+            }
+          }
+
+          &.start{
+            &:before{
+              content:"";
+              border-top:solid 7px transparent;
+              border-left:solid 12px #666;
+              border-right:solid 12px transparent;
+              border-bottom:solid 7px transparent;
+              position:absolute;
+              top:5px;left:6px;
+            }
+          }
+
+          &.close{
+            &:before{
+              content:"";
+              height:17px;width:3px;
+              //@include border-radius(2px);
+              background-color:#666;
+              position:absolute;
+              top:4px;left:11px;
+              @include transform(rotate(45deg));
+            }
+            &:after{
+              content:"";
+              height:17px;width:3px;
+              //@include border-radius(2px);
+              background-color:#666;
+              position:absolute;
+              top:4px;left:11px;
+              @include transform(rotate(-45deg));
+            }
+          }
+
+        }
+      }
+    }
+  }
+}

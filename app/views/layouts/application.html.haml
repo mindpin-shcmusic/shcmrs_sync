@@ -3,12 +3,13 @@
 :ruby
   tstr = ((yield :title) || '').gsub("\n",'')
   title = tstr.blank? ? 'MINDPIN - 开发原型工程' : "#{tstr} - MINDPIN - 开发原型工程"
+  current_user_id = logged_in? ? current_user.id : 0
 
 !!! 5
 %html{:lang=>'zh'}
   %head
     %meta{:charset=>'utf-8'}
-    %meta{:'current-user-id' => current_user.id}
+    %meta{:'current-user-id' => current_user_id}
     %title=title
     = csrf_meta_tags
     = stylesheet_link_tag 'application', 'share_message'
@@ -27,11 +28,11 @@
             %a.logout{:href=>'/logout'} 退出登录
         .page-content
           = yield
-
-    .notifiers{:style => UserShareTipMessage.count(current_user) > 0? nil : 'display:none;'}
-      .media-share-notifier{:'data-count' => UserShareTipMessage.count(current_user)}
-        .content #{UserShareTipMessage.count(current_user)}个新文件分享
-        = link_to '查看', UserShareTipMessage.url(current_user)
+    -if logged_in?
+      .notifiers{:style => UserShareTipMessage.count(current_user) > 0? nil : 'display:none;'}
+        .media-share-notifier{:'data-count' => UserShareTipMessage.count(current_user)}
+          .content #{UserShareTipMessage.count(current_user)}个新文件分享
+          = link_to '查看', UserShareTipMessage.url(current_user)
 
     = javascript_include_tag 'http://localhost:8080/application.js'
     = javascript_include_tag 'application'

@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120713014107) do
+ActiveRecord::Schema.define(:version => 20120716180041) do
 
   create_table "file_entities", :force => true do |t|
     t.string   "attach_file_name"
@@ -64,6 +63,19 @@ ActiveRecord::Schema.define(:version => 20120713014107) do
 
   add_index "online_records", ["key"], :name => "index_online_records_on_key"
   add_index "online_records", ["user_id"], :name => "index_online_records_on_user_id"
+
+  create_table "slice_temp_files", :force => true do |t|
+    t.integer  "creator_id"
+    t.string   "entry_file_name"
+    t.string   "entry_content_type"
+    t.integer  "entry_file_size",    :limit => 8
+    t.datetime "entry_updated_at"
+    t.integer  "saved_size",         :limit => 8
+    t.boolean  "merged"
+    t.string   "real_file_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "users", :force => true do |t|
     t.string   "name",                      :default => "", :null => false
