@@ -26,7 +26,7 @@ class PublicResourcesController < ApplicationController
   end
 
 
-  # 目录下面的目录
+  
   def index_file
     id = params[:file_entity_id]
 
@@ -34,7 +34,7 @@ class PublicResourcesController < ApplicationController
     return send_file file_entity.attach.path
   end
 
-
+  # 目录下面的目录
   def dir
     resource_path = URI.decode(request.fullpath).sub(/\/public_resources\/user\/.*\/file/, "")
 
