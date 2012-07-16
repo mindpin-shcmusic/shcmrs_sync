@@ -10,3 +10,5 @@ tmp/
 public/system/*
 Gemfile.lock
 coverage/
+.idea/*
+config/database.yml

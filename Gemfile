@@ -7,9 +7,10 @@ gem 'mysql2'
 gem 'json'
 gem 'therubyracer'
 gem 'jquery-rails'
+gem 'juggernaut'
+gem 'redis'
 gem 'thinking-sphinx', '2.0.10'
 gem 'rmmseg-cpp'
-
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'
@@ -25,7 +26,8 @@ gem 'factory_girl_rails'
 
 group :development, :test do
   gem 'rspec-rails'
-  gem 'rcov'
+  gem 'rcov', :platform => :mri_18
+  gem 'simplecov', :platform => :mri_19
   gem 'spork', '~> 0.9.2'
   gem 'timecop'
 end
