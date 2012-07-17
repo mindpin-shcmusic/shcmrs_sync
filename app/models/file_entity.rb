@@ -14,4 +14,6 @@ class FileEntity < ActiveRecord::Base
     entity = FileEntity.create :attach => file,
                                :md5    => md5
   end
+
+
 end

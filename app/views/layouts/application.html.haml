@@ -12,7 +12,7 @@
     %meta{:'current-user-id' => current_user_id}
     %title=title
     = csrf_meta_tags
-    = stylesheet_link_tag 'application', 'share_message'
+    = stylesheet_link_tag 'application'
     = yield :css
     = yield :head
 
@@ -23,6 +23,7 @@
           .title=title
         .page-sidebar
           -if logged_in?
+            %a.file{:href=>'/public_resources', :class=>request.path.starts_with?('/media_shares/public_resources') ? 'current' : ''} 公共资源
             %a.file{:href=>'/file', :class=>request.path.starts_with?('/file') ? 'current' : ''} 我的个人文件夹
             %a.share{:href=>'/media_shares/mine', :class=>request.path.starts_with?('/media_shares') ? 'current' : ''} 我收到的共享
             %a.logout{:href=>'/logout'} 退出登录

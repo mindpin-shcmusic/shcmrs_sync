@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120716180041) do
+ActiveRecord::Schema.define(:version => 20120716030256) do
 
   create_table "file_entities", :force => true do |t|
     t.string   "attach_file_name"
@@ -64,15 +64,11 @@ ActiveRecord::Schema.define(:version => 20120716180041) do
   add_index "online_records", ["key"], :name => "index_online_records_on_key"
   add_index "online_records", ["user_id"], :name => "index_online_records_on_user_id"
 
-  create_table "slice_temp_files", :force => true do |t|
+  create_table "public_resources", :force => true do |t|
     t.integer  "creator_id"
-    t.string   "entry_file_name"
-    t.string   "entry_content_type"
-    t.integer  "entry_file_size",    :limit => 8
-    t.datetime "entry_updated_at"
-    t.integer  "saved_size",         :limit => 8
-    t.boolean  "merged"
-    t.string   "real_file_name"
+    t.integer  "media_resource_id"
+    t.integer  "file_entity_id"
+    t.string   "kind"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

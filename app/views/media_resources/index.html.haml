@@ -34,6 +34,10 @@
       = link_to resource.name, url, :class=>'link'
       = link_to '删除', url, :method=>'delete', :confirm=>'确定吗？', :class=>'delete'
       = link_to '共享给其他人', share_url, :class=>'share'
+      - if !resource.is_public?
+        %a.put-public{:href=>'javascript:;', 'data-id' => resource.id} 添加到公共资源库
+      - else
+        .is-public 已经添加到公共资源
 
       .time.quiet=time
       .size.quiet=media_resource_size_str(resource)

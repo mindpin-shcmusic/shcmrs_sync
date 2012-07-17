@@ -17,3 +17,17 @@ jQuery ->
 
 			$upload_form.attr('action', action)
 			console.log(action)
+
+
+jQuery ->
+  jQuery('.page-media-resource-list .media-resource a.put-public').live 'click', ->
+    elm = jQuery(this)
+    id = elm.data('id')
+
+    jQuery.ajax({
+      type: 'POST',
+      url : '/public_resources/share/',
+      data: {resource_id: id},
+      success : ->
+        elm.remove()
+    })
