@@ -1,0 +1,36 @@
+.page-media-resources-public-forms
+  = flash[:error]
+
+  = form_tag '/public_resources/upload', :method => 'put', :multipart => true, :class => 'upload-public-file' do
+    = hidden_field_tag :current_path, @current_dir.blank? ? '/' : @current_dir.path
+    = file_field_tag :file
+    %a.form-submit-button 上传文件
+
+  
+.page-media-shared-resource-list
+  - unless @shared_resources.any? || @uploaded_resources.any?
+    .media-resource-blank.quiet
+      该共享目录下没有资源
+  - else
+    - if @shared_resources.any?
+      - @shared_resources.each do |shared|
+        :ruby
+          url = "/public_resources/user/#{shared.creator.id}/file#{shared.media_resource.path}"
+          klass = 'dir'
+        .media-resource{:class => klass}
+          = link_to shared.media_resource.name, url, :class=>'link'
+          .from-creator
+            %span 来自
+            %span= link_to "#{shared.creator.name}", "/users/#{shared.creator.id}"
+
+
+    - if @uploaded_resources.any?
+      - @uploaded_resources.each do |upload|
+        :ruby
+          klass = 'file'
+          url = "/public_resources/user/#{upload.creator.id}/index_file/#{upload.file_entity.id}"
+        .media-resource{:class => klass}
+          = link_to upload.file_entity.attach_file_name, url, :class=>'link'
+          .from-creator
+            %span 来自
+            %span= link_to "#{upload.creator.name}", "/users/#{upload.creator.id}"
