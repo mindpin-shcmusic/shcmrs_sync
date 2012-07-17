@@ -10,7 +10,7 @@ gem 'jquery-rails'
 gem 'juggernaut'
 gem 'redis'
 gem 'thinking-sphinx', '2.0.10'
-gem 'rmmseg-cpp-huacnlee'
+gem 'rmmseg-cpp'
 gem 'redis-namespace'
 gem 'redis-search', :path => 'vendor/redis-search'
 
