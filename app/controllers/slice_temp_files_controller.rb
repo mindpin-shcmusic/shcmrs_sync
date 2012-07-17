@@ -29,7 +29,6 @@ class SliceTempFilesController < ApplicationController
     render :status=>500,:text=>ex.message
   end
 
-  def select_upload_file
-    params[:path]
+  def new_upload_page
   end
 end
