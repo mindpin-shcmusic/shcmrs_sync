@@ -12,13 +12,14 @@ class TextboxList
         evt.stopPropagation()
 
         target = evt.target
-
         # 点击的是外层容器吗？
         cond1 = (target == @$list[0] || target == @$container[0])
         # list 的最后一个子节点没有被聚焦吗？
         cond2 = (!@focused || @current != @$list.children().last())
 
-        @focus_last() if cond1 and cond2
+        console.log(target, cond1, cond2)
+
+        @focus_last() if cond1 && cond2
 
     @$list = jQuery('<ul></ul>')
       .addClass('bits')
@@ -33,7 +34,6 @@ class TextboxList
   after_init: =>
     bit = @create('Editable')
     @$list.append(bit.$elm)
-    @on_add(bit)
 
     jQuery(document)
       .bind 'click', ()=>
@@ -51,44 +51,45 @@ class TextboxList
 
         value = @current.get_value();
 
-        is_box = @current.is('box')
-        at_editable_left  = @current.is('editable') && (caret == 0 || value.length == 0)
-        at_editable_right = @current.is('editable') && caret == value.length
+        is_box      = @current.is('box')
+        is_editable = @current.is('editable')
+        at_editable_left  = is_editable && caret == 0
+        at_editable_right = is_editable && caret == value.length
 
         switch evt.keyCode
           when 8 # backspace
             if is_box
               evt.preventDefault()
               @current.remove()
-              @focus_relative('prev')
+              @focus_to @current.prev()
 
             if at_editable_left
               evt.preventDefault()
-              @focus_relative('prev')
+              @focus_to @current.prev()
 
           when 37 # ← left
             if is_box || at_editable_left
               evt.preventDefault()
-              @focus_relative('prev')
+              @focus_to @current.prev()
 
           when 46 # delete
             if is_box
               evt.preventDefault()
               @current.remove()
-              @focus_relative('next')
+              @focus_to @current.next()
 
             if at_editable_right
               evt.preventDefault()
-              @focus_relative('next')
+              @focus_to @current.next()
 
           when 39 # → right
             if is_box || at_editable_right
               evt.preventDefault()
-              @focus_relative('next')
+              @focus_to @current.next()
 
 
 
-  create: (klass, value, options)=>
+  create: (klass, value)=>
     bit = new TextboxListBit[klass](value, this)
     return bit
 
@@ -107,30 +108,24 @@ class TextboxList
     @$container.removeClass('focus')
 
   on_add: (bit)=>
-    if bit.is('box')
-      prior = get_bit_obj_of(bit.$elm.prev())
+    # if bit.is('box')
+    #   prior = get_bit_obj_of(bit.$elm.prev())
 
-      if (prior && prior.is('box')) || !prior
-        b = @create('editable')
-        b.$elm.hide()
+    #   if (prior && prior.is('box')) || !prior
+    #     b = @create('editable')
+    #     b.$elm.hide()
 
-        # .inject(prior || this.list, prior ? 'after' : 'top');
+    #     # .inject(prior || this.list, prior ? 'after' : 'top');
 
   on_remove: (bit)=>
     return this if !@focused
     prior = @get_bit_obj_of bit.$elm.prev()
     if prior && prior.is('editable') 
       prior.remove()
-    this.focus_relative('next', bit)
+    @focus_to bit.next()
 
-  focus_relative: (dir, to)=>
-    # dir = prev | next
-
-    $elm = (to || @current).$elm[dir]()
-
-    bit = @get_bit_obj_of($elm);
+  focus_to: (bit)=>
     bit.focus() if bit
-    return this
 
   focus_last: =>   
     last_element = @$list.children().last()
@@ -154,12 +149,14 @@ class TextboxList
 
 # ---------------------------
 
+# 基类，不会直接被实例化
 class TextboxListBit
   constructor: (value, textboxlist)->
     @textboxlist = textboxlist
 
     @$elm = jQuery('<li></li>')
       .addClass('bit')
+      .addClass(@type)
       .bind 'mouseenter', =>
         @$elm.addClass('hover')
       .bind 'mouseleave', =>
@@ -172,16 +169,14 @@ class TextboxListBit
     @focused = true
     @textboxlist.on_focus(this)
     @$elm
-      .addClass("#{@prefix}-focus")
-      .addClass("#{@prefix}-#{@type}-focus")
+      .addClass('focus')
 
   blur: =>
     return this if (!@focused)
     @focused = false
     @textboxlist.on_blur(this)
     @$elm
-      .removeClass("#{@prefix}-focus")
-      .removeClass("#{@prefix}-#{@type}-focus")
+      .removeClass('focus')
 
   remove: =>
     @blur()
@@ -197,13 +192,23 @@ class TextboxListBit
   get_value: =>
     return @value
 
+  prev: =>
+    $prev = @$elm.prev()
+    return @get_bit_obj_of($prev) if $prev
+
+  next: =>
+    $next = @$elm.next()
+    return @get_bit_obj_of($next) if $next
+
+# ----------------------------------------------------
+
 class TextboxListBit.Editable extends TextboxListBit
   type: 'editable'
   constructor: (value, @textboxlist, options)->
     super(value, textboxlist, options)
 
     @$element = jQuery('<input type="text" />')
-      .addClass("#{@textboxlist.options.prefix}-bit-editable-input")
+      .addClass('input')
       .attr('data-autocomplete', 'off')
       .val(value)
     # 处理输入框自动延长
@@ -250,20 +255,20 @@ class TextboxListBit.Editable extends TextboxListBit
   to_box: =>
     box = @textboxlist.create('Box', @get_value())
     
-    if $box
+    if box
       @$elm.before box.$elm
       @textboxlist.on_add(this)
       @set_value('')
-      return $box
+      return box
 
     return null
+
+# -----------------------------------------
 
 class TextboxListBit.Box extends TextboxListBit
   type: 'box'
   constructor: (value, textboxlist, options)->
     super(value, textboxlist, options)
-    @$elm.addClass("#{@textboxlist.options.prefix}-bit-box")
-
     @$elm.html(value)
     @$elm
       .bind 'click', @focus
@@ -275,3 +280,4 @@ class TextboxListBit.Box extends TextboxListBit
 window.TextboxList = TextboxList
 window.TextboxListBit = TextboxListBit
 window.TextboxListBit.Editable = TextboxListBit.Editable
+window.TextboxListBit.Box = TextboxListBit.Box
