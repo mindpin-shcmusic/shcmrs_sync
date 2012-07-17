@@ -49,6 +49,11 @@ class SliceTempFile < ActiveRecord::Base
     FileUtils.rm_r(blob_dir)
   end
 
+  def build_file_entity
+    file_entity = FileEntity.create(:merged => false)
+    MergeSliceTempFileResqueQueue.enqueue(self.id, file_entity.id)
+    file_entity
+  end
 
   private
 
