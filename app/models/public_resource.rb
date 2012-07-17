@@ -5,9 +5,11 @@ class PublicResource < ActiveRecord::Base
 
 
   def self.upload_by_user(user, file)
+    file_entity = FileEntity.new(:attach => file)
     public_resource = PublicResource.create(
       :creator => user,
-      :file_entity => FileEntity.new(:attach => file),
+      :file_entity => file_entity,
+      :name => file_entity.attach_file_name,
       :kind => 'UPLOAD'
     )
   end
@@ -56,6 +58,7 @@ class PublicResource < ActiveRecord::Base
         public_resource = PublicResource.create(
           :creator => self.creator,
           :media_resource => self,
+          :name => self.name,
           :kind => 'LINK'
         )
 
@@ -75,5 +78,18 @@ class PublicResource < ActiveRecord::Base
   end
 
   # 结束 MediaResourceMethods
+
+
+  # 设置全文索引字段
+  define_index do
+    # fields
+    indexes name, :sortable => true
+    indexes creator_id
+    
+    # attributes
+    has kind, created_at, updated_at
+
+    set_property :delta => true
+  end
   
 end

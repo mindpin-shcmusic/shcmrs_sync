@@ -52,4 +52,14 @@ class PublicResourcesController < ApplicationController
   end
 
 
+  # 搜索公共资源
+  def search
+    @keyword = params[:keyword]
+    @public_resources = PublicResource.search(@keyword, 
+      :conditions => {:creator_id => current_user.id}, 
+      :page => params[:page], :per_page => 20)
+
+  end
+
+
 end
