@@ -7,7 +7,8 @@ class SliceTempFilesController < ApplicationController
 
     slice_temp_file = SliceTempFile.find_or_create(file_name,file_size,current_user)
     if slice_temp_file.valid?
-      render :json=>slice_temp_file.saved_size.to_s
+      res = {:saved_size => slice_temp_file.saved_size}
+      render :json=>res
     else
       render :status=>422,:json=>slice_temp_file.errors
     end

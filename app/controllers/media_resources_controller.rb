@@ -35,7 +35,7 @@ class MediaResourcesController < ApplicationController
 
     slice_temp_file.remove_files
     slice_temp_file.destroy
-    redirect_to :back
+    render :text=>200
   end
 
   def create_folder
