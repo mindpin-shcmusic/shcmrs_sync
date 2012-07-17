@@ -46,4 +46,7 @@ class User < ActiveRecord::Base
 
   include MediaShare::UserMethods
   
+  include FuzzySearch
+
+  fuzzy_index :name, :created_at
 end

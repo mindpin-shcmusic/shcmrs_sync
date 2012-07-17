@@ -8,7 +8,7 @@
 %html{:lang=>'zh'}
   %head
     %meta{:charset=>'utf-8'}
-    %meta{:'current-user-id' => current_user.id}
+    %meta{:'current-user-id' => logged_in? ? current_user.id : nil}
     %title=title
     = csrf_meta_tags
     = stylesheet_link_tag 'application', 'share_message'
@@ -26,10 +26,11 @@
         .page-content
           = yield
 
-    .notifiers{:style => UserShareTipMessage.count(current_user) > 0? nil : 'display:none;'}
-      .media-share-notifier{:'data-count' => UserShareTipMessage.count(current_user)}
-        .content #{UserShareTipMessage.count(current_user)}个新文件分享
-        = link_to '查看', UserShareTipMessage.url(current_user)
+    - if logged_in?
+      .notifiers{:style => UserShareTipMessage.count(current_user) > 0? nil : 'display:none;'}
+        .media-share-notifier{:'data-count' => UserShareTipMessage.count(current_user)}
+          .content #{UserShareTipMessage.count(current_user)}个新文件分享
+          = link_to '查看', UserShareTipMessage.url(current_user)
 
     = javascript_include_tag 'http://localhost:8080/application.js', 'application'
     = yield :javascript
