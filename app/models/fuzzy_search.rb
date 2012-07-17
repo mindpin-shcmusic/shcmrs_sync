@@ -9,9 +9,9 @@ module FuzzySearch
 
   module ClassMethods
     def search(title, conditions = {})
-      Redis::Search.query self.to_s,
-                          title,
-                          :conditions => conditions
+      Redis::Search.complete self.to_s,
+                             title,
+                             :conditions => conditions
     end
 
     protected
