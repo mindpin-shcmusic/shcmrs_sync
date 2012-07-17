@@ -1,3 +1,7 @@
+.page-media-resource-head
+  =render 'public_resources/parts/search_bar'
+  =render 'public_resources/parts/forms'
+
 =render 'public_resources/parts/nav'
 
 .page-media-shared-resource-list
@@ -14,4 +18,3 @@
         .from-creator
           %span 来自
           %span= link_to "#{resource.creator.name}", "/users/#{resource.creator.id}"
-

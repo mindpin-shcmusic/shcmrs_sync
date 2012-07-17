@@ -46,5 +46,6 @@ class User < ActiveRecord::Base
 
   include MediaShare::UserMethods
   include PublicResource::UserMethods
-  
+  include UserAvatarMethods
+  include RedisSearch::UserMethods
 end

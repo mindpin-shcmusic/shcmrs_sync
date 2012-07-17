@@ -1,0 +1,31 @@
+.page-media-resource-head
+  =render 'public_resources/parts/search_bar'
+  =render 'public_resources/parts/forms'
+
+=render 'public_resources/parts/nav'
+
+.page-media-shared-resource-list
+  - if @public_resources.blank?
+    .media-resource-blank.quiet
+      该共享目录下没有资源
+  - else
+    - @public_resources.each do |public_res|
+      - if public_res.kind == 'LINK'
+        :ruby
+          klass = public_res.media_resource.is_dir? ? 'dir' : 'file'
+          url = "/public_resources/user/#{public_res.creator.id}/file#{public_res.media_resource.path}"
+        .media-resource{:class => klass}
+          = link_to public_res.name, url, :class=>'link'
+          .from-creator
+            %span 来自
+            %span= link_to "#{public_res.creator.name}", "/users/#{public_res.creator.id}"
+
+      - else
+        :ruby
+          klass = 'file'
+          url = "/public_resources/user/#{public_res.creator.id}/index_file/#{public_res.file_entity.id}"
+        .media-resource{:class => klass}
+          = link_to public_res.name, url, :class=>'link'
+          .from-creator
+            %span 来自
+            %span= link_to "#{public_res.creator.name}", "/users/#{public_res.creator.id}"

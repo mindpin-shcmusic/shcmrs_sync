@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120716180041) do
+ActiveRecord::Schema.define(:version => 20120717025728) do
 
   create_table "file_entities", :force => true do |t|
     t.string   "attach_file_name"
@@ -71,6 +71,8 @@ ActiveRecord::Schema.define(:version => 20120716180041) do
     t.string   "kind"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "name"
+    t.boolean  "delta",             :default => true, :null => false
   end
 
   create_table "slice_temp_files", :force => true do |t|

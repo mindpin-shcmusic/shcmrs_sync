@@ -1,0 +1,7 @@
+- @users.each do |user|
+  .user{:'data-id' => user.id}
+
+    .avatar
+      = image_tag user.logo
+    .name= user.name
+    .email= user.email
