@@ -25,9 +25,7 @@ class MediaResourcesController < ApplicationController
   end
 
   def upload_file
-    file_name = params[:file_name]
-    file_size = params[:file_size]
-    slice_temp_file = SliceTempFile.get(file_name,file_size,current_user)
+    slice_temp_file = SliceTempFile.find(params[:slice_temp_file_id])
     file = slice_temp_file.get_merged_file
 
     resource_path = URI.decode(request.fullpath).sub('/file_put', '')

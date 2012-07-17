@@ -45,6 +45,7 @@ jQuery(
             console.log("new upload ")
             console.log(res)
             _this.uploaded_byte = res.saved_size;
+            _this.SLICE_TEMP_FILE_ID = res.slice_temp_file_id;
             _this.inform_or_upload();
           },
           error : function(){
@@ -55,12 +56,8 @@ jQuery(
 
       this._get_form_data = function(){
         var form_data = new FormData;
-
-        form_data.append('file_name',  this.file.name);
-        form_data.append('file_size',  this.file.size);
+        form_data.append('slice_temp_file_id',  this.SLICE_TEMP_FILE_ID);
         form_data.append('file_blob',  this.get_blob());
-        form_data.append('creator_id', this.CREATOR_ID);
-
         return form_data;
       }
 
@@ -167,8 +164,7 @@ jQuery(
           url  :  url,
           type : 'PUT',
           data : {
-            'file_name'     : this.file.name,
-            'file_size'     : this.file.size
+            'slice_temp_file_id' : this.SLICE_TEMP_FILE_ID
           },
           success : function(data){ //返回应该是一个字符串，新的media_file_id
             pie.log('inform返回: ', arguments);
