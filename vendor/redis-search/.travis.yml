@@ -1,0 +1,4 @@
+rvm: 1.9.2
+before_script:
+  - "cp spec/redis.yml.forci spec/redis.yml"
+
