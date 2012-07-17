@@ -1,4 +1,5 @@
 .page-media-resource-head
+  =render 'public_resources/parts/search_bar'
   =render 'public_resources/parts/forms'
 
 =render 'public_resources/parts/nav'
@@ -11,7 +12,8 @@
     - @shared_resources.each do |shared|
       :ruby
         url = "/public_resources/user/#{shared.creator.id}/file#{shared.media_resource.path}"
-        klass = 'dir'
+        klass = shared.media_resource.is_dir? ? 'dir' : 'file'
+
       .media-resource{:class => klass}
         = link_to shared.media_resource.name, url, :class=>'link'
         .from-creator

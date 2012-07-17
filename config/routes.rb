@@ -52,6 +52,7 @@ Voteapp::Application.routes.draw do
     collection do
       post :share
       put :upload
+      get :search
     end
   end
 
