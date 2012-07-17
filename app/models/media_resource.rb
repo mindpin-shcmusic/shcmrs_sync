@@ -77,13 +77,22 @@ class MediaResource < ActiveRecord::Base
     return nil
   end
 
-  # 根据传入的资源路径字符串以及文件对象，创建一个文件资源
-  # 传入的路径类似 /hello/test.txt
-  # 创建文件资源的过程中，关联创建文件夹资源
+  def self.put_unmerged(creator, resource_path, file_entity)
+    self._put(creator, resource_path, file_entity)
+  end
+
   def self.put(creator, resource_path, file)
     raise NotAssignCreatorError if creator.blank?
     raise FileEmptyError if file.blank?
 
+    file_entity = FileEntity.new(:attach => file, :merged => true)
+    self._put(creator, resource_path, file_entity)
+  end
+
+  # 根据传入的资源路径字符串以及文件对象，创建一个文件资源
+  # 传入的路径类似 /hello/test.txt
+  # 创建文件资源的过程中，关联创建文件夹资源
+  def self._put(creator, resource_path, file_entity)
     with_exclusive_scope do
       file_name = self.split_path(resource_path)[-1]
       dir_names = self.split_path(resource_path)[0...-1] # 只创建到上层目录
@@ -95,7 +104,7 @@ class MediaResource < ActiveRecord::Base
       resource.update_attributes(
         :is_dir      => false,
         :is_removed  => false,
-        :file_entity => FileEntity.new(:attach => file)
+        :file_entity => file_entity
       )
     end
   end

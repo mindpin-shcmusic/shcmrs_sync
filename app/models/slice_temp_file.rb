@@ -1,5 +1,4 @@
 class SliceTempFile < ActiveRecord::Base
-  SLICE_TEMP_FILE_BASE_DIR = "#{Rails.root}/public/system/slice_temp_files/"
   belongs_to :creator, :class_name => "User"
 
   validates :creator_id, 
@@ -56,6 +55,11 @@ class SliceTempFile < ActiveRecord::Base
     FileUtils.rm_r(blob_dir)
   end
 
+  def build_file_entity
+    file_entity = FileEntity.create(:merged => false)
+    MergeSliceTempFileResqueQueue.enqueue(self.id, file_entity.id)
+    file_entity
+  end
 
   private
 
@@ -70,7 +74,7 @@ class SliceTempFile < ActiveRecord::Base
 
   # 当前 slice_temp_file 的 文件片段的存放路径
   def blob_dir
-    dir = File.join(SLICE_TEMP_FILE_BASE_DIR, self.id.to_s)
+    dir = File.join(R::SLICE_TEMP_FILE_ATTACHED_DIR, self.id.to_s)
     FileUtils.mkdir_p(dir)
     dir
   end

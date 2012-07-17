@@ -1,6 +1,6 @@
 .page-media-resources-forms
   = flash[:error]
-  =link_to "选择文件上传","/select_upload_file?path=#{@current_dir.blank? ? '/' : @current_dir.path}"
+  =link_to "选择文件上传","/new_upload_page?path=#{@current_dir.blank? ? '/' : @current_dir.path}"
 
   = form_tag '/file/create_folder', :method => 'post', :class => 'create-folder' do
     = hidden_field_tag :current_path, @current_dir.blank? ? '/' : @current_dir.path

@@ -5,3 +5,4 @@
 require File.expand_path('../config/application', __FILE__)
 
 Voteapp::Application.load_tasks
+require 'resque/tasks'

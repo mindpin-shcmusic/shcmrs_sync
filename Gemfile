@@ -11,6 +11,7 @@ gem 'juggernaut'
 gem 'redis'
 gem 'thinking-sphinx', '2.0.10'
 gem 'rmmseg-cpp'
+gem 'resque'
 gem 'redis-namespace'
 gem 'redis-search', :path => 'vendor/redis-search'
 

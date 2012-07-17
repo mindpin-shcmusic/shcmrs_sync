@@ -23,7 +23,7 @@ Voteapp::Application.routes.draw do
 
   post '/new_upload'               => 'slice_temp_files#new_upload'
   post '/upload_blob'              => 'slice_temp_files#upload_blob'
-  get  '/select_upload_file' => 'slice_temp_files#select_upload_file'
+  get  '/new_upload_page' => 'slice_temp_files#new_upload_page'
   
   resources :media_shares do
     collection do
