@@ -1,7 +1,5 @@
 - @users.each do |user|
-  .user{:'data-id' => user.id}
-
-    .avatar
-      = image_tag user.logo
+  .autocomplete-result.user{:'data-name' => user.name, :'data-value' => user.id}
+    .avatar= image_tag user.logo
     .name= user.name
     .email= user.email

@@ -62,6 +62,52 @@
       }
     }
   }
+
+  .results{
+    width:400px;
+    margin-top:2px;
+    border:solid 1px #ccc;
+
+    .autocomplete-result.user{
+      overflow:hidden;
+      border-bottom:1px solid #ccc;
+      &:last-child{
+        border-bottom:none;
+      }
+
+      height:36px;
+
+      background-color:white;
+      @include transition(all ease-out .1s);
+      &:hover{
+        background-color:#eee;
+      }
+
+      padding-top:4px;
+
+      .avatar{
+        width:32px;height:32px;
+        img{width:32px;height:32px;}
+        float:left;
+        margin-left:4px;
+        overflow:hidden;
+      }
+      .name{
+        font-size: 12px;
+        font-weight: bold;
+        height: 16px;
+        line-height: 16px;
+        margin-left: 44px;
+      }
+      .email{
+        color: #999999;
+        font-size: 12px;
+        height: 16px;
+        line-height: 16px;
+        margin-left: 44px;
+      }
+    }
+  }
 }
 
 // .textboxlist-bit-box-deletable { 

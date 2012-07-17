@@ -25,18 +25,12 @@ class MediaResourcesController < ApplicationController
   end
 
   def upload_file
-    file_name = params[:file_name]
-    file_size = params[:file_size]
-    slice_temp_file = SliceTempFile.get(file_name, file_size, current_user)
-    file = slice_temp_file.get_merged_file
-
-    # ------------------
-
+    slice_temp_file = SliceTempFile.find(params[:slice_temp_file_id])
+    unmerged_file_entity = slice_temp_file.build_file_entity
+    
     resource_path = URI.decode(request.fullpath).sub('/file_put', '')
-    MediaResource.put(current_user, resource_path, file)
+    MediaResource.put_unmerged(current_user, resource_path, unmerged_file_entity)
 
-    slice_temp_file.remove_files
-    slice_temp_file.destroy
     render :text=>200
   end
 
