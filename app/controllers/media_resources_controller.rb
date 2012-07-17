@@ -25,9 +25,17 @@ class MediaResourcesController < ApplicationController
   end
 
   def upload_file
+    file_name = params[:file_name]
+    file_size = params[:file_size]
+    slice_temp_file = SliceTempFile.get(file_name,file_size,current_user)
+    file = slice_temp_file.get_merged_file
+
     resource_path = URI.decode(request.fullpath).sub('/file_put', '')
-    MediaResource.put(current_user, resource_path, params[:file])
-    redirect_to :back
+    MediaResource.put(current_user, resource_path, file)
+
+    slice_temp_file.remove_files
+    slice_temp_file.destroy
+    render :text=>200
   end
 
   def create_folder
