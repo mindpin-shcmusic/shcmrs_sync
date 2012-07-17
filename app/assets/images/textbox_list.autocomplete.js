@@ -65,7 +65,9 @@ TextboxList.Autocomplete = new Class({
   },
   
   setupBit: function(bit){
-    bit.element.addEvent('keydown', this.navigate, true).addEvent('keyup', function(){ this.search(); }.bind(this), true);
+    bit.element
+      .addEvent('keydown', this.navigate, true)
+      .addEvent('keyup', function(){ this.search(); }.bind(this), true);
   },
     
   search: function(bit){
@@ -81,17 +83,25 @@ TextboxList.Autocomplete = new Class({
       if (this.searchValues[search]){
         this.values = this.searchValues[search];
       } else {
+        
         var data = this.options.remote.extraParams, that = this;
         if ($type(data) == 'function') data = data.run([], this);
         data[this.options.remote.param] = search;
+
         if (this.currentRequest) this.currentRequest.cancel();
-        this.currentRequest = new Request.JSON({url: this.options.remote.url, data: data, onRequest: function(){
-          that.showPlaceholder(that.options.remote.loadPlaceholder);
-        }, onSuccess: function(data){
-          that.searchValues[search] = data;
-          that.values = data;
-          that.showResults(search);
-        }}).send();
+        this.currentRequest = 
+          new Request.JSON({
+            url: this.options.remote.url, 
+            data: data, 
+            onRequest: function(){
+              that.showPlaceholder(that.options.remote.loadPlaceholder);
+            }, 
+            onSuccess: function(data){
+              that.searchValues[search] = data;
+              that.values = data;
+              that.showResults(search);
+            }
+          }).send();
       }
     } 
     if (this.values.length) this.showResults(search);

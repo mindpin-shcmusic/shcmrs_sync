@@ -61,10 +61,13 @@ class MediaResourcesController < ApplicationController
   # 搜索当前登录用户资源
   def search
     @keyword = params[:keyword]
-    @media_resources = MediaResource.search(@keyword, 
-      :conditions => {:creator_id => current_user.id, :is_removed => 0}, 
-      :page => params[:page], :per_page => 20)
-
+    @media_resources = MediaResource.search @keyword.gsub('"', '\"'),
+                                            :conditions => {
+                                              :creator_id => current_user.id, 
+                                              :is_removed => 0
+                                            }, 
+                                            :page => params[:page], 
+                                            :per_page => 20
   end
 
 end

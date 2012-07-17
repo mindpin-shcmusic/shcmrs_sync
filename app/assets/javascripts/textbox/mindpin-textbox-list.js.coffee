@@ -17,15 +17,15 @@ class TextboxList
         # list 的最后一个子节点没有被聚焦吗？
         cond2 = (!@focused || @current != @$list.children().last())
 
-        console.log(target, cond1, cond2)
+        # console.log(target, cond1, cond2)
 
         @focus_last() if cond1 && cond2
 
+      .appendTo @$element
+
     @$list = jQuery('<ul></ul>')
       .addClass('bits')
-
-    @$container.append @$list
-    @$element.append @$container
+      .appendTo @$container
 
     @after_init()
 
@@ -55,6 +55,8 @@ class TextboxList
         is_editable = @current.is('editable')
         at_editable_left  = is_editable && caret == 0
         at_editable_right = is_editable && caret == value.length
+
+        # console.log(is_box, is_editable, at_editable_left, at_editable_right, caret)
 
         switch evt.keyCode
           when 8 # backspace
@@ -147,6 +149,24 @@ class TextboxList
   # setValues
   # update
 
+  # autocomplete
+  show_results: (html)=>
+    console.log(html)
+
+    if !@$result_list
+      @$result_list = jQuery('<ul></ul>')
+        .addClass('results')
+        .bind 'click'
+          
+
+
+        .appendTo @$container
+
+    @$result_list.html(html)
+
+
+
+
 # ---------------------------
 
 # 基类，不会直接被实例化
@@ -194,11 +214,11 @@ class TextboxListBit
 
   prev: =>
     $prev = @$elm.prev()
-    return @get_bit_obj_of($prev) if $prev
+    return @textboxlist.get_bit_obj_of($prev) if $prev
 
   next: =>
     $next = @$elm.next()
-    return @get_bit_obj_of($next) if $next
+    return @textboxlist.get_bit_obj_of($next) if $next
 
 # ----------------------------------------------------
 
@@ -225,6 +245,11 @@ class TextboxListBit.Editable extends TextboxListBit
 
     @$elm.append(@$element)
 
+    # autocomplete
+    @$element
+      .bind 'keyup', =>
+        @complete_search()
+
   # hide
 
   focus: =>
@@ -238,10 +263,10 @@ class TextboxListBit.Editable extends TextboxListBit
     return this
 
   get_caret: =>
-    return @$element.selectionStart # 这里不用支持 IE
+    return @$element[0].selectionStart # 这里不用支持 IE
 
   get_caret_end: =>
-    return @$element.selectionEnd
+    return @$element[0].selectionEnd
 
   is_selected: =>
     return @focused && @get_caret() != @get_caret_end()
@@ -262,6 +287,22 @@ class TextboxListBit.Editable extends TextboxListBit
       return box
 
     return null
+
+  # autocomplete
+  complete_search: =>
+    value = @get_value()
+    if jQuery.string(value).blank()
+      @textboxlist.show_results('')
+      return
+
+    jQuery.ajax
+      url : '/user_complete_search'
+      data : {
+        q : value
+      },
+      success : (res)=>
+        @textboxlist.show_results(res)
+
 
 # -----------------------------------------
 
