@@ -110,7 +110,7 @@ class TextboxList
     if bit.is('box')
       prior = get_bit_obj_of(bit.$elm.prev())
 
-      if (prior && prior.is('box') || !prior
+      if (prior && prior.is('box')) || !prior
         b = @create('editable')
         b.$elm.hide()
 

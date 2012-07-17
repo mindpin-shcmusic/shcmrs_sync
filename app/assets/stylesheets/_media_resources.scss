@@ -21,14 +21,14 @@
     &.dir a.link{background:url(ico.png) 0px -124px no-repeat;}
     &.file a.link{background:url(ico.png) 0px -603px no-repeat;}
 
-    a.delete, a.share{display:none;}
+    a.delete, a.share, a.put-public, .is-public{display:none;}
 
     .size{font-size:11px;float:right;}
     .time{font-size:11px;float:right;margin-left:20px;}
 
     &:hover{
       background-color:#f1f1f1;
-      a.delete, a.share{
+      a.delete, a.share, a.put-public, .is-public{
         display:block;
         float:left;
         font-size:14px;

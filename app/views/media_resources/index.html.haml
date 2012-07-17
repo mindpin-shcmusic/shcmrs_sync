@@ -2,28 +2,6 @@
   =render 'media_resources/parts/search_bar'
   =render 'media_resources/parts/forms'
 
-- content_for :javascript do
-  :javascript
-    $(document).ready(function(){
-      $('.put-public').live('click', function(){
-        var elm = jQuery(this).closest('.put-public');
-        var id = elm.data('id');
-
-        $.ajax({
-          type: 'POST',
-          url: "/public_resources/share/",
-          data: {resource_id: id},
-          dataType: "html"
-        }).done(function ( data ) {
-          if (data != '') {
-            elm.remove();
-          }
-          
-        });
-
-      });
-    });
-
 .page-media-resource-nav
   .go-parent-dir
     - if @current_dir.blank?
@@ -56,8 +34,10 @@
       = link_to resource.name, url, :class=>'link'
       = link_to '删除', url, :method=>'delete', :confirm=>'确定吗？', :class=>'delete'
       = link_to '共享给其他人', share_url, :class=>'share'
-      - unless resource.is_public?
-        %a.form-submit-button{:href=>'javascript:;', :class => "put-public", "data-id" => resource.id} 添加到公共资源库
+      - if !resource.is_public?
+        %a.put-public{:href=>'javascript:;', 'data-id' => resource.id} 添加到公共资源库
+      - else
+        .is-public 已经添加到公共资源
 
       .time.quiet=time
       .size.quiet=media_resource_size_str(resource)
