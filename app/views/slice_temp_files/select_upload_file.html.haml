@@ -1,0 +1,38 @@
+.page-media-file-uploader{:'data-new-upload-url'=>'/new_upload', :'data-send-blob-url'=>'/upload_blob', :'data-file-put-url' => '/file_put',:'data-current-path' => params[:path]}
+  .upload-drop-area
+    .upload-btn-box
+      %a.upload-btn{:href=>'javascript:;'} 打开文件
+      = file_field_tag :file, :multiple => true
+    .desc 上传视频，音频，图片或其他文件。支持1G以上大文件，支持断点续传。
+    .tip 
+      %span.t1 请把想要上传的文件拖放到页面上任何位置
+      %span.t2 你正在拖放文件，松开鼠标按键，开始上传
+
+  .progress-bar-sample.hide
+    .file{:'data-name'=>'', :'data-size'=>''}
+      .meta
+        .name on_your_mark.rmvb
+        .size (65.5MB)
+        .hide
+          .md5  MD5: 计算中……
+          .md5-percent 16%
+
+      .bar
+        .percent 26.8%
+        .p{:style=>'width:26.8%;'}
+      .stat
+        .speed 
+          %span.t 上传速度:
+          %span.data 32KB/s
+        .remaining-time
+          %span.t 剩余时间:
+          %span.data 00:32:32
+      .error-info
+        文件上传出错 
+      .ops.running
+        %a.pause{:href=>'javascript:;', :title=>'暂停上传'} 暂停
+        %a.start{:href=>'javascript:;', :title=>'开始上传'} 运行
+        %a.close{:href=>'javascript:;', :title=>'取消上传'} 关闭
+
+  .uploading-files-list
+

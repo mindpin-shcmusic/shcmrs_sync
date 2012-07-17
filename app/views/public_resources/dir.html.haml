@@ -1,0 +1,17 @@
+=render 'public_resources/parts/nav'
+
+.page-media-shared-resource-list
+  - if @media_resources.blank?
+    .media-resource-blank.quiet
+      该共享目录下没有资源
+  - else
+    - @media_resources.each do |resource|
+      :ruby
+        klass = resource.is_dir? ? 'dir' : 'file'
+        url = "/public_resources/user/#{resource.creator.id}/file#{resource.path}"
+      .media-resource{:class => klass}
+        = link_to resource.name, url, :class=>'link'
+        .from-creator
+          %span 来自
+          %span= link_to "#{resource.creator.name}", "/users/#{resource.creator.id}"
+

@@ -45,6 +45,7 @@ class User < ActiveRecord::Base
   end
 
   include MediaShare::UserMethods
+  include PublicResource::UserMethods
   
   include FuzzySearch
 

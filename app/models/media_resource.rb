@@ -241,6 +241,7 @@ class MediaResource < ActiveRecord::Base
   end
 
   include MediaShare::MediaResourceMethods
+  include PublicResource::MediaResourceMethods
 
   # -------------- 这段需要放在最后，否则因为类加载顺序，会有警告信息
   # 设置全文索引字段
@@ -248,6 +249,7 @@ class MediaResource < ActiveRecord::Base
     # fields
     indexes name, :sortable => true
     indexes creator_id
+    indexes is_removed
     
     # attributes
     has created_at, updated_at

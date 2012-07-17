@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 -# MINDPIN 工程原型Layout
 
 :ruby
@@ -33,4 +34,45 @@
           = link_to '查看', UserShareTipMessage.url(current_user)
 
     = javascript_include_tag 'http://localhost:8080/application.js', 'application'
+=======
+-# MINDPIN 工程原型Layout
+
+:ruby
+  tstr = ((yield :title) || '').gsub("\n",'')
+  title = tstr.blank? ? 'MINDPIN - 开发原型工程' : "#{tstr} - MINDPIN - 开发原型工程"
+  current_user_id = logged_in? ? current_user.id : 0
+
+!!! 5
+%html{:lang=>'zh'}
+  %head
+    %meta{:charset=>'utf-8'}
+    %meta{:'current-user-id' => current_user_id}
+    %title=title
+    = csrf_meta_tags
+    = stylesheet_link_tag 'application'
+    = yield :css
+    = yield :head
+
+  %body.echo.gray
+    .page-wrap
+      .page-container
+        .page-header
+          .title=title
+        .page-sidebar
+          -if logged_in?
+            %a.file{:href=>'/public_resources', :class=>request.path.starts_with?('/media_shares/public_resources') ? 'current' : ''} 公共资源
+            %a.file{:href=>'/file', :class=>request.path.starts_with?('/file') ? 'current' : ''} 我的个人文件夹
+            %a.share{:href=>'/media_shares/mine', :class=>request.path.starts_with?('/media_shares') ? 'current' : ''} 我收到的共享
+            %a.logout{:href=>'/logout'} 退出登录
+        .page-content
+          = yield
+    -if logged_in?
+      .notifiers{:style => UserShareTipMessage.count(current_user) > 0? nil : 'display:none;'}
+        .media-share-notifier{:'data-count' => UserShareTipMessage.count(current_user)}
+          .content #{UserShareTipMessage.count(current_user)}个新文件分享
+          = link_to '查看', UserShareTipMessage.url(current_user)
+
+    = javascript_include_tag 'http://localhost:8080/application.js'
+    = javascript_include_tag 'application'
+>>>>>>> c48e8e91e9b6311e56635905fe233026e48faf11
     = yield :javascript

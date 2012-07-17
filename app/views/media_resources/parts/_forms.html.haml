@@ -1,0 +1,8 @@
+.page-media-resources-forms
+  = flash[:error]
+  =link_to "选择文件上传","/select_upload_file?path=#{@current_dir.blank? ? '/' : @current_dir.path}"
+
+  = form_tag '/file/create_folder', :method => 'post', :class => 'create-folder' do
+    = hidden_field_tag :current_path, @current_dir.blank? ? '/' : @current_dir.path
+    = text_field_tag :folder
+    %a.form-submit-button 创建文件夹

@@ -1,0 +1,7 @@
+.page-media-resources-forms
+  = flash[:error]
+
+  = form_tag '/public_resources/upload', :method=>'put', :multipart=>true, :class=>'upload-public-file' do
+    = hidden_field_tag :current_path, @current_dir.blank? ? '/' : @current_dir.path
+    = file_field_tag :file
+    %a.form-submit-button 上传文件

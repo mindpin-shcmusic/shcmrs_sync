@@ -3,10 +3,7 @@ require File.expand_path('../boot', __FILE__)
 require 'rails/all'
 
 if defined?(Bundler)
-  # If you precompile assets before deploying to production, use this line
-  Bundler.require(*Rails.groups(:assets => %w(development test)))
-  # If you want your assets lazily compiled in production, use this line
-  # Bundler.require(:default, :assets, Rails.env)
+  Bundler.require(:default, :assets, Rails.env)
 end
 
 module Voteapp
@@ -57,4 +54,11 @@ def randstr(length=8)
     re << base[rand(size)]
   }
   re
+end
+
+# 获取一个随机的文件名
+def get_randstr_filename(uploaded_filename)
+  ext_name = File.extname(uploaded_filename)
+
+  return "#{randstr}#{ext_name.blank? ? "" : ext_name }".strip
 end

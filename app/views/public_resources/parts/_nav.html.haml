@@ -1,0 +1,13 @@
+.page-media-resource-nav
+  .go-parent-dir
+    - if @current_dir.blank?
+      %span.quiet 上一级
+    - else
+      :ruby
+        url = @current_dir.dir.blank? ? "/public_resources" : File.join("/public_resources/user/#{params[:id]}/file", @current_dir.dir.path)
+      %a{:href => url} 上一级
+
+  .navs
+    %span= link_to '公共资源根目录', '/public_resources'
+    - media_resource_navs_dirs(@current_dir).each do |dir|
+      %span= link_to dir.name, File.join("/public_resources/user/#{params[:id]}/file", dir.path)

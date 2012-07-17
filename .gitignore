@@ -1,6 +1,8 @@
 .bundle
 db/*.sqlite3
 log/*.log
+log/*.pid
+config/development.sphinx.conf
 tmp/
 .sass-cache/
 .powenv
@@ -10,4 +12,3 @@ Gemfile.lock
 coverage/
 .idea/*
 config/database.yml
-*DS_*

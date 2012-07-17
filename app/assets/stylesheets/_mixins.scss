@@ -1,0 +1,53 @@
+@mixin base-font-family{
+  //font-family:Tahoma,Arial,Helvetica,STHeiti,sans-serif;
+  font-family: "Microsoft Yahei", "微软雅黑", Tahoma, Arial, Helvetica, STHeiti, sans-serif;
+}
+
+@mixin number-font-family{
+  //font-family:helvetica,'Helvetica Neue',arial,"liberation sans",freesans,sans-serif;
+  //font-family:Arial,Liberation Sans,DejaVu Sans,sans-serif;
+  font-family: "Microsoft Yahei", "微软雅黑", Arial, Liberation Sans, DejaVu Sans, sans-serif;
+}
+
+@mixin numfont{
+  @include number-font-family;
+}
+
+// ----------------- ³£ÓÃµÄº¯Êý
+
+@mixin gradient($from, $to){
+  background : -moz-linear-gradient(-90deg, $from, $to);
+  background : -webkit-gradient(linear, 0% 0%, 0% 100%, from($from), to($to));
+}
+
+@mixin gradient-ltor($from, $to){
+  background : -moz-linear-gradient(0deg, $from, $to);
+  background : -webkit-gradient(linear, 0% 0%, 100% 0%, from($from), to($to));
+}
+
+@mixin border-radius($radius){
+     -moz-border-radius : $radius;
+  -webkit-border-radius : $radius;
+          border-radius : $radius;
+}
+
+@mixin transition($params){
+     -moz-transition : $params;
+  -webkit-transition : $params;
+          transition : $params;
+}
+
+@mixin transform($params){
+     -moz-transform : $params;
+  -webkit-transform : $params;
+          transform : $params;
+}
+
+// ------------
+
+@mixin lighten-gradient($from, $to, $percent){
+  $f : lighten($from, $percent);
+  $t : lighten($to, $percent);
+  background : -moz-linear-gradient(-90deg, $f, $t);
+  background : -webkit-gradient(linear, 0% 0, 0% 100%, from($f), to($t));
+}

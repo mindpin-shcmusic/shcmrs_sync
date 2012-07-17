@@ -1,0 +1,30 @@
+.page-media-resource-head
+  =render 'public_resources/parts/forms'
+
+=render 'public_resources/parts/nav'
+  
+.page-media-shared-resource-list
+  - if @shared_resources.blank? && @uploaded_resources.blank?
+    .media-resource-blank.quiet
+      该共享目录下没有资源
+  - else
+    - @shared_resources.each do |shared|
+      :ruby
+        url = "/public_resources/user/#{shared.creator.id}/file#{shared.media_resource.path}"
+        klass = 'dir'
+      .media-resource{:class => klass}
+        = link_to shared.media_resource.name, url, :class=>'link'
+        .from-creator
+          %span 来自
+          %span= link_to "#{shared.creator.name}", "/users/#{shared.creator.id}"
+
+
+    - @uploaded_resources.each do |upload|
+      :ruby
+        klass = 'file'
+        url = "/public_resources/user/#{upload.creator.id}/index_file/#{upload.file_entity.id}"
+      .media-resource{:class => klass}
+        = link_to upload.file_entity.attach_file_name, url, :class=>'link'
+        .from-creator
+          %span 来自
+          %span= link_to "#{upload.creator.name}", "/users/#{upload.creator.id}"

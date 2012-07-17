@@ -1,5 +1,3 @@
-= render 'media_resources/parts/file_menu'
-
 = form_tag "/media_shares?resource_path=#{params[:resource_path]}", :method => 'post', :class => 'create' do
   = hidden_field_tag :media_resource_id, @current_dir.blank? ? '/' : @current_dir.id
   %ul
@@ -13,3 +11,12 @@
         = user.name
 
   = submit_tag "共享"
+
+
+.page-user-selector
+
+-content_for :javascript do
+  :javascript
+    jQuery(function(){
+      new TextboxList('.page-user-selector');
+    });

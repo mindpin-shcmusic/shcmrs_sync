@@ -1,0 +1,17 @@
+# 实际开发的时候，database配置务必修改一下
+
+development:
+  adapter: mysql2
+  encoding: utf8
+  database: pin-shcmrs-sync 
+  username: root
+  password: root 
+  host: localhost
+
+test:
+  adapter: mysql2
+  encoding: utf8
+  database: pin-shcmrs-sync-test
+  username: root
+  password: root
+  host: localhost
