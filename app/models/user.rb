@@ -46,8 +46,5 @@ class User < ActiveRecord::Base
 
   include MediaShare::UserMethods
   include PublicResource::UserMethods
-  
-  include FuzzySearch
-
-  fuzzy_index :name, :created_at
+  include RedisSearch::UserMethods
 end

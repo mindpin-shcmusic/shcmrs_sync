@@ -1,8 +1,14 @@
 class SliceTempFile < ActiveRecord::Base
   SLICE_TEMP_FILE_BASE_DIR = "#{Rails.root}/public/system/slice_temp_files/"
-  belongs_to :creator, :class_name=>"User"
+  belongs_to :creator, :class_name => "User"
 
-  validates :creator_id, :entry_file_name, :real_file_name, :entry_file_size, :saved_size, :presence => true
+  validates :creator_id, 
+            :entry_file_name, 
+            :real_file_name, 
+            :entry_file_size, 
+            :saved_size, 
+            :presence => true
+
   before_validation(:on => :create) do |slice_temp_file|
     slice_temp_file.saved_size = 0
   end
@@ -15,13 +21,13 @@ class SliceTempFile < ActiveRecord::Base
       :real_file_name  => file_name,
       :entry_file_name => get_randstr_filename(file_name),
       :entry_file_size => file_size,
-      :creator      => creator
+      :creator         => creator
     )
   end
   
   def self.get(file_name,file_size,creator)
     self.where(
-      :real_file_name => file_name,
+      :real_file_name  => file_name,
       :entry_file_size => file_size,
       :creator_id      => creator.id
     ).first
@@ -43,7 +49,7 @@ class SliceTempFile < ActiveRecord::Base
     if !merged?
       merge_slice_files
     end
-    File.new(file_path,"r")
+    File.new(file_path, 'r')
   end
 
   def remove_files
