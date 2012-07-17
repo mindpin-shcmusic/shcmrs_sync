@@ -8,7 +8,7 @@ module FuzzySearch
   end
 
   module ClassMethods
-    def search(title, conditions = {})
+    def complete_search(title, conditions = {})
       Redis::Search.complete self.to_s,
                              title,
                              :conditions => conditions

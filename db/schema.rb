@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120716030256) do
+ActiveRecord::Schema.define(:version => 20120717025728) do
 
   create_table "file_entities", :force => true do |t|
     t.string   "attach_file_name"
@@ -69,6 +69,21 @@ ActiveRecord::Schema.define(:version => 20120716030256) do
     t.integer  "media_resource_id"
     t.integer  "file_entity_id"
     t.string   "kind"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name"
+    t.boolean  "delta",             :default => true, :null => false
+  end
+
+  create_table "slice_temp_files", :force => true do |t|
+    t.integer  "creator_id"
+    t.string   "entry_file_name"
+    t.string   "entry_content_type"
+    t.integer  "entry_file_size",    :limit => 8
+    t.datetime "entry_updated_at"
+    t.integer  "saved_size",         :limit => 8
+    t.boolean  "merged"
+    t.string   "real_file_name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

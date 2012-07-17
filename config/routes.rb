@@ -59,6 +59,8 @@ Voteapp::Application.routes.draw do
   get    '/public_resources/user/:id/file/*path' => 'public_resources#dir'
   get    '/public_resources/user/:id/index_file/:file_entity_id' => 'public_resources#index_file'
   put    '/public_resources/upload/*path' => 'public_resources#upload'
+  get    '/user_complete_search' => 'index#user_complete_search'
+
   # 结束公共资源
 
 end
