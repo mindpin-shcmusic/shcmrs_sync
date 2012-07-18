@@ -1,8 +1,14 @@
 class MediaShareRule < ActiveRecord::Base
+  after_create :enque_build_share
+
   belongs_to :media_resource
   belongs_to :creator
 
-  def build_expression(options = {:users => [], :courses => [], :teams => []})
+  def build_expression(options = {})
+    options[:users] ||= []
+    options[:courses] ||= []
+    options[:teams] ||= []
+
     self.expression = options.to_json
   end
 
@@ -22,7 +28,7 @@ class MediaShareRule < ActiveRecord::Base
 
     user_ids = (direct_ids + course_user_ids + team_user_ids).flatten.compact.uniq
 
-    user_ids.delete(self.media_resource.creator)
+    user_ids.delete(self.media_resource.creator.id)
     user_ids
   end
 
@@ -36,6 +42,12 @@ class MediaShareRule < ActiveRecord::Base
                         :media_resource => self.media_resource,
                         :receiver       => user
     }
+  end
+
+  private
+
+  def enque_build_share
+    BuildMediaShareResqueQueue.enqueue(self.id)
   end
 
   module UserMethods
