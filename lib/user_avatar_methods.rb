@@ -7,6 +7,8 @@ module UserAvatarMethods
         :normal => '48x48#',
         :tiny   => '32x32#',
         :mini   => '24x24#'
-      }
+      },
+      :default_style => :normal,
+      :default_url   => '/default_avatars/:style.png'
   end
 end
