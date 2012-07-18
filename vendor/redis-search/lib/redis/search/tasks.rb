@@ -37,4 +37,13 @@ namespace :redis_search do
     puts "Indexed #{count} rows  |  Time spend: #{(Time.now - tm)}s".rjust(120)
     puts "Rebuild Index done.".rjust(120)
   end
+
+  desc "remove all indices"
+  task :clean => :environment do
+    redis = Redis::Search.config.redis
+
+    puts 'starting....'
+    redis.keys.each {|key| redis.del key}
+    puts 'done!'
+  end
 end
