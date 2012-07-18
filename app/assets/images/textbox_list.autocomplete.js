@@ -83,7 +83,7 @@ TextboxList.Autocomplete = new Class({
       if (this.searchValues[search]){
         this.values = this.searchValues[search];
       } else {
-        
+
         var data = this.options.remote.extraParams, that = this;
         if ($type(data) == 'function') data = data.run([], this);
         data[this.options.remote.param] = search;
@@ -204,7 +204,9 @@ TextboxList.Autocomplete = new Class({
     switch (ev.code){
       case Event.Keys.up:     
         ev.stop();
-        (!this.options.onlyFromValues && this.current && this.current == this.list.getFirst()) ? this.blur() : this.focusRelative('previous');
+        (!this.options.onlyFromValues && this.current && this.current == this.list.getFirst()) ? 
+
+          this.blur() : this.focusRelative('previous');
         break;
       case Event.Keys.down:     
         ev.stop();

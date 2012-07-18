@@ -15,7 +15,7 @@ class TextboxList
         # 点击的是外层容器吗？
         cond1 = (target == @$list[0] || target == @$container[0])
         # list 的最后一个子节点没有被聚焦吗？
-        cond2 = (!@focused || @current != @$list.children().last())
+        cond2 = (!@focused || @current != @get_last_bit())
 
         # console.log(target, cond1, cond2)
 
@@ -130,9 +130,13 @@ class TextboxList
     bit.focus() if bit
 
   focus_last: =>   
+    last_bit = @get_last_bit()
+    last_bit.focus() if last_bit
+
+  get_last_bit: =>
     last_element = @$list.children().last()
-    @get_bit_obj_of(last_element).focus() if last_element
-    return this
+    return @get_bit_obj_of(last_element) if last_element
+    return null
 
   blur: =>
     return this if !@focused
@@ -151,21 +155,69 @@ class TextboxList
 
   # autocomplete
   show_results: (html)=>
-    console.log(html)
+    # console.log(html)
+
+    that = this
 
     if !@$result_list
       @$result_list = jQuery('<ul></ul>')
         .addClass('results')
-        .bind 'click'
-          
-
+        .delegate '.autocomplete-result', 'click', (evt)->
+          evt.preventDefault()
+          $result = jQuery(this)
+          that.add_result($result)
 
         .appendTo @$container
 
     @$result_list.html(html)
 
+  complete_search: =>
+    value = @current.get_value()
+    if @last_search_value != value
+      @last_search_value = value
+      if jQuery.string(value).blank()
+        @show_results('')
+        return
 
+      @result_blur()
+      jQuery.ajax
+        url : '/user_complete_search'
+        data : {
+          q : value
+        },
+        success : (res)=>
+          @show_results(res)
 
+  focus_first: =>
+    $first_result = @$result_list.find('.autocomplete-result').first()
+    @focus_result $first_result
+
+  focus_next_result: =>
+    return if !@$current_result
+    @focus_result @$current_result.next()
+
+  focus_prev_result: =>
+    return if !@$current_result
+    @focus_result @$current_result.prev()
+
+  focus_result: ($result)=>
+    if $result.length > 0
+      @$current_result.removeClass('focus') if @$current_result
+      $result.addClass('focus')
+      @$current_result = $result
+
+  result_blur: =>
+    @$current_result.removeClass('focus') if @$current_result
+    @$current_result = null
+
+  add_result: ($result)=>
+    name  = $result.data('name')
+    value = $result.data('value')
+    bit = @get_last_bit()
+    if bit
+      bit.set_value(name)
+      bit.to_box()
+      bit.focus()
 
 # ---------------------------
 
@@ -238,17 +290,33 @@ class TextboxListBit.Editable extends TextboxListBit
         @focus(true)
       .bind 'blur', =>
         @blur(true)
-      .bind 'keydown', (evt)=>
-        if evt.keyCode == 13
-          evt.preventDefault()
-          @to_box()
+      # .bind 'keydown', (evt)=>
+      #   if evt.keyCode == 13
+      #     evt.preventDefault()
+      #     @to_box()
 
     @$elm.append(@$element)
 
-    # autocomplete
+    # autocomplete events
     @$element
       .bind 'keyup', =>
-        @complete_search()
+        @textboxlist.complete_search()
+      .bind 'keydown', (evt)=>
+        switch evt.keyCode
+          when 38 # ↑ up
+            if @textboxlist.$current_result
+              if @textboxlist.$result_list.find('.autocomplete-result').first()[0] == @textboxlist.$current_result[0]
+                @textboxlist.result_blur()
+              else @textboxlist.focus_prev_result()
+          when 40 # ↓ down
+            evt.preventDefault()
+            if @textboxlist.$current_result
+            then @textboxlist.focus_next_result()
+            else @textboxlist.focus_first()
+          when 13 # enter
+            evt.preventDefault()
+            if @textboxlist.$current_result
+              @textboxlist.add_result(@textboxlist.$current_result)
 
   # hide
 
@@ -288,20 +356,6 @@ class TextboxListBit.Editable extends TextboxListBit
 
     return null
 
-  # autocomplete
-  complete_search: =>
-    value = @get_value()
-    if jQuery.string(value).blank()
-      @textboxlist.show_results('')
-      return
-
-    jQuery.ajax
-      url : '/user_complete_search'
-      data : {
-        q : value
-      },
-      success : (res)=>
-        @textboxlist.show_results(res)
 
 
 # -----------------------------------------

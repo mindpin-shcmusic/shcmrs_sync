@@ -24,12 +24,9 @@
         line-height:$height;
 
         .input{
-          // border: 0; 
-          // height:$height - 2px;
-          // line-height:$height - 2px;
-          height:$height - 2px;
-          line-height:$height - 2px;
-          border:solid 1px #ccc;
+          border:none; 
+          height:$height;
+          line-height:$height;
           padding:0;
           &:focus{outline:0;}
           float:left;
@@ -70,6 +67,7 @@
 
     .autocomplete-result.user{
       overflow:hidden;
+      cursor:pointer;
       border-bottom:1px solid #ccc;
       &:last-child{
         border-bottom:none;
@@ -78,16 +76,21 @@
       height:36px;
 
       background-color:white;
-      @include transition(all ease-out .1s);
+      //@include transition(all ease-out .1s);
       &:hover{
         background-color:#eee;
+      }
+      &.focus{
+        background-color:#CFE981;
+        // .name{color:white;}
+        // .email{color:rgba(white, 0.8);}
       }
 
       padding-top:4px;
 
       .avatar{
         width:32px;height:32px;
-        img{width:32px;height:32px;}
+        img{width:32px;height:32px;display:block;background-color:black;}
         float:left;
         margin-left:4px;
         overflow:hidden;
