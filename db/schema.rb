@@ -10,7 +10,25 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120717025728) do
+ActiveRecord::Schema.define(:version => 20120718075458) do
+
+  create_table "course_students", :force => true do |t|
+    t.integer  "course_id"
+    t.integer  "student_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "courses", :force => true do |t|
+    t.string   "name",       :default => "", :null => false
+    t.string   "cid"
+    t.string   "department"
+    t.string   "location"
+    t.integer  "teacher_id"
+    t.text     "desc"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "file_entities", :force => true do |t|
     t.string   "attach_file_name"
@@ -45,13 +63,21 @@ ActiveRecord::Schema.define(:version => 20120717025728) do
   add_index "media_resources", ["fileops_time"], :name => "index_media_resources_on_fileops_time"
   add_index "media_resources", ["name"], :name => "index_media_resources_on_name"
 
-  create_table "media_shares", :force => true do |t|
+  create_table "media_share_rules", :force => true do |t|
+    t.integer  "creator_id"
     t.integer  "media_resource_id"
+    t.text     "expression"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "media_shares", :force => true do |t|
     t.integer  "creator_id"
     t.integer  "receiver_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "delta",             :default => true, :null => false
+    t.integer  "media_resource_id"
   end
 
   create_table "online_records", :force => true do |t|
@@ -84,6 +110,37 @@ ActiveRecord::Schema.define(:version => 20120717025728) do
     t.integer  "saved_size",         :limit => 8
     t.boolean  "merged"
     t.string   "real_file_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "students", :force => true do |t|
+    t.string   "real_name",  :default => "", :null => false
+    t.string   "sid"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "teachers", :force => true do |t|
+    t.string   "real_name",  :default => "", :null => false
+    t.string   "tid"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "team_students", :force => true do |t|
+    t.integer  "team_id"
+    t.integer  "student_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "teams", :force => true do |t|
+    t.string   "name",       :default => "", :null => false
+    t.string   "cid"
+    t.integer  "teacher_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

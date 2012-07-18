@@ -48,4 +48,6 @@ class User < ActiveRecord::Base
   include PublicResource::UserMethods
   include UserAvatarMethods
   include RedisSearch::UserMethods
+  include Student::UserMethods
+  include Teacher::UserMethods
 end
