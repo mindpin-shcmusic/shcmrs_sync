@@ -18,6 +18,10 @@ class MergeSliceTempFileResqueQueue
 
     slice_temp_file.remove_files
     slice_temp_file.destroy
+    
+    if file_entity.is_video?
+      FileEntityVideoEncodeResqueQueue.enqueue(file_entity_id)
+    end
   rescue Exception => ex
     p ex.message
     puts ex.backtrace*"\n"

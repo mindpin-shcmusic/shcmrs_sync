@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(:version => 20120718075458) do
     t.boolean  "merged",              :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "video_encode_status"
   end
 
   add_index "file_entities", ["md5"], :name => "index_file_entities_on_md5"

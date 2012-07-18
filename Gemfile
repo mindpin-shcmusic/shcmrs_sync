@@ -14,7 +14,7 @@ gem 'rmmseg-cpp'
 gem 'resque'
 gem 'redis-namespace'
 gem 'redis-search', :path => 'vendor/redis-search'
-
+gem 'streamio-ffmpeg'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.5'

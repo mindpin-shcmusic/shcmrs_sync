@@ -37,8 +37,7 @@ class SliceTempFile < ActiveRecord::Base
   def save_new_blob(file_blob)
     return if is_complete_upload?
     # 保存文件片段
-    File.open(next_blob_path,"w") { |f| f << file_blob.read }
-
+    FileUtils.mv(file_blob.path,next_blob_path)
     # 记录保存进度
     self.saved_size += file_blob.size
     self.save
