@@ -37,7 +37,7 @@ class Redis
         self.debug = false
         self.redis = nil
         self.complete_max_length = 100
-        self.pinyin_match = false
+        self.pinyin_match = true
         self.disable_rmmseg = false        
       end
     end

@@ -178,7 +178,7 @@ class Redis
         # Pinyin search split as pinyin again
         _split(Pinyin.t(text))
       end
-  
+
     private
       def self._split(text)
         # return chars if disabled rmmseg

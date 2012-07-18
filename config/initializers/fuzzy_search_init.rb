@@ -5,8 +5,8 @@ begin
 
   Redis::Search.configure do |config|
     config.redis = store
-    config.complete_max_length = 32
     config.pinyin_match = true
+    config.disable_rmmseg = true
   end
 
   User.new
