@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120717025728) do
+ActiveRecord::Schema.define(:version => 20120718022753) do
 
   create_table "file_entities", :force => true do |t|
     t.string   "attach_file_name"
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(:version => 20120717025728) do
     t.boolean  "merged",              :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "video_encode_status"
   end
 
   add_index "file_entities", ["md5"], :name => "index_file_entities_on_md5"
