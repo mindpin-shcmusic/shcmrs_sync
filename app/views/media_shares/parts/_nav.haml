@@ -8,6 +8,6 @@
       %a{:href => url} 上一级
 
   .navs
-    %span= link_to '共享根目录', '/media_shares/my'
+    %span= link_to '共享根目录', '/media_shares/mine'
     - media_resource_navs_dirs(@current_dir).each do |dir|
       %span= link_to dir.name, File.join("/media_shares/user/#{params[:id]}/file", dir.path)

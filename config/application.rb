@@ -62,3 +62,15 @@ def get_randstr_filename(uploaded_filename)
 
   return "#{randstr}#{ext_name.blank? ? "" : ext_name }".strip
 end
+
+def file_content_type(file_name)
+  MIME::Types.type_for(file_name).first.content_type
+rescue
+  ext = file_name.split(".")[-1]
+  case ext
+  when 'rmvb'
+    'application/vnd.rn-realmedia'
+  else
+    'application/octet-stream'
+  end
+end
