@@ -27,6 +27,8 @@ class TextboxList
       .addClass('bits')
       .appendTo @$container
 
+    @autocomplete = new TextboxList.Autocomplete(this)
+
     @after_init()
 
   # enablePlugin
@@ -153,71 +155,9 @@ class TextboxList
   # setValues
   # update
 
-  # autocomplete
-  show_results: (html)=>
-    # console.log(html)
-
-    that = this
-
-    if !@$result_list
-      @$result_list = jQuery('<ul></ul>')
-        .addClass('results')
-        .delegate '.autocomplete-result', 'click', (evt)->
-          evt.preventDefault()
-          $result = jQuery(this)
-          that.add_result($result)
-
-        .appendTo @$container
-
-    @$result_list.html(html)
-
-  complete_search: =>
-    value = @current.get_value()
-    if @last_search_value != value
-      @last_search_value = value
-      if jQuery.string(value).blank()
-        @show_results('')
-        return
-
-      @result_blur()
-      jQuery.ajax
-        url : '/user_complete_search'
-        data : {
-          q : value
-        },
-        success : (res)=>
-          @show_results(res)
-
-  focus_first: =>
-    $first_result = @$result_list.find('.autocomplete-result').first()
-    @focus_result $first_result
-
-  focus_next_result: =>
-    return if !@$current_result
-    @focus_result @$current_result.next()
-
-  focus_prev_result: =>
-    return if !@$current_result
-    @focus_result @$current_result.prev()
-
-  focus_result: ($result)=>
-    if $result.length > 0
-      @$current_result.removeClass('focus') if @$current_result
-      $result.addClass('focus')
-      @$current_result = $result
-
-  result_blur: =>
-    @$current_result.removeClass('focus') if @$current_result
-    @$current_result = null
-
-  add_result: ($result)=>
-    name  = $result.data('name')
-    value = $result.data('value')
-    bit = @get_last_bit()
-    if bit
-      bit.set_value(name)
-      bit.to_box()
-      bit.focus()
+  on_editable_appended: (editable_bit)=>
+    # 当 editable 被添加到页面时
+    @autocomplete.bind_editable_bit_events(editable_bit)
 
 # ---------------------------
 
@@ -276,8 +216,8 @@ class TextboxListBit
 
 class TextboxListBit.Editable extends TextboxListBit
   type: 'editable'
-  constructor: (value, @textboxlist, options)->
-    super(value, textboxlist, options)
+  constructor: (value, textboxlist)->
+    super(value, textboxlist)
 
     @$element = jQuery('<input type="text" />')
       .addClass('input')
@@ -297,26 +237,7 @@ class TextboxListBit.Editable extends TextboxListBit
 
     @$elm.append(@$element)
 
-    # autocomplete events
-    @$element
-      .bind 'keyup', =>
-        @textboxlist.complete_search()
-      .bind 'keydown', (evt)=>
-        switch evt.keyCode
-          when 38 # ↑ up
-            if @textboxlist.$current_result
-              if @textboxlist.$result_list.find('.autocomplete-result').first()[0] == @textboxlist.$current_result[0]
-                @textboxlist.result_blur()
-              else @textboxlist.focus_prev_result()
-          when 40 # ↓ down
-            evt.preventDefault()
-            if @textboxlist.$current_result
-            then @textboxlist.focus_next_result()
-            else @textboxlist.focus_first()
-          when 13 # enter
-            evt.preventDefault()
-            if @textboxlist.$current_result
-              @textboxlist.add_result(@textboxlist.$current_result)
+    @textboxlist.on_editable_appended(this)
 
   # hide
 
@@ -356,23 +277,140 @@ class TextboxListBit.Editable extends TextboxListBit
 
     return null
 
-
-
 # -----------------------------------------
 
 class TextboxListBit.Box extends TextboxListBit
   type: 'box'
-  constructor: (value, textboxlist, options)->
-    super(value, textboxlist, options)
+  constructor: (value, textboxlist)->
+    super(value, textboxlist)
     @$elm.html(value)
     @$elm
       .bind 'click', @focus
     # 删除按钮
 
+# ---------------------------------------------
 
+class TextboxList.Autocomplete
+  constructor: (textboxlist)->
+    @textboxlist = textboxlist
+
+    # 当前选中结果
+    @$current_result = null
+    # 缓存对象
+    @cache = {}
+
+    # 构造结果列表 dom
+    @_build_result_list()
+
+  bind_editable_bit_events: (editable_bit)=>
+    editable_bit.$element
+      .bind 'keyup', =>
+        @complete_search(editable_bit)
+      .bind 'keydown', (evt)=>
+        switch evt.keyCode
+          when 38 # ↑ up
+            evt.preventDefault()
+            if @$current_result
+              if @_is_focused_on_first()
+                @result_blur()
+              else @focus_prev_result()
+          when 40 # ↓ down
+            evt.preventDefault()
+            if @$current_result
+            then @focus_next_result()
+            else @focus_first()
+          when 13 # enter
+            evt.preventDefault()
+            if @$current_result
+              @add_result(@$current_result)
+
+  _build_result_list: =>
+    that = this
+    @$result_list = jQuery('<ul></ul>')
+      .addClass('results')
+      .delegate '.autocomplete-result', 'click', (evt)->
+        evt.preventDefault()
+        $result = jQuery(this)
+        that.add_result($result)
+
+    @textboxlist.$container.append @$result_list
+
+  _is_focused_on_first: =>
+    return false if !@$current_result
+    first_dom = @$result_list.find('.autocomplete-result').first()[0]
+    current_dom = @$current_result[0]
+    return first_dom == current_dom
+
+  _ajax_request: (value)=>
+    jQuery.ajax
+      url : '/user_complete_search'
+      data : { q : value },
+      success : (res)=>
+        @show_results(res)
+        @_put_request_cache(value, res)
+
+  _get_request_cache: (value)=>
+    return @cache[value]
+  _put_request_cache: (value, res)=>
+    @cache[value] = res
+
+  complete_search: (editable_bit)=>
+    value = editable_bit.get_value()
+    return if @last_search_value == value
+
+    @last_search_value = value
+    if jQuery.string(value).blank()
+      @show_results('')
+      return
+
+    cache_res = @_get_request_cache(value)
+    if !cache_res
+      @_ajax_request(value)
+    else
+      @show_results(cache_res)
+
+  show_results: (html)=>
+    # console.log(html)
+
+    @result_blur()
+    @$result_list.html(html)
+
+
+  focus_first: =>
+    $first_result = @$result_list.find('.autocomplete-result').first()
+    @focus_result $first_result
+
+  focus_next_result: =>
+    return if !@$current_result
+    @focus_result @$current_result.next()
+
+  focus_prev_result: =>
+    return if !@$current_result
+    @focus_result @$current_result.prev()
+
+  focus_result: ($result)=>
+    if $result.length > 0
+      @$current_result.removeClass('focus') if @$current_result
+      $result.addClass('focus')
+      @$current_result = $result
+
+  result_blur: =>
+    @$current_result.removeClass('focus') if @$current_result
+    @$current_result = null
+
+  add_result: ($result)=>
+    name  = $result.data('name')
+    value = $result.data('value')
+    bit = @textboxlist.get_last_bit()
+    if bit
+      bit.set_value(name)
+      bit.to_box()
+      bit.focus()
 
 
 window.TextboxList = TextboxList
+window.TextboxList.Autocomplete = TextboxList.Autocomplete
+
 window.TextboxListBit = TextboxListBit
 window.TextboxListBit.Editable = TextboxListBit.Editable
 window.TextboxListBit.Box = TextboxListBit.Box

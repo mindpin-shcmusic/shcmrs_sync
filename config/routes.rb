@@ -63,4 +63,6 @@ Voteapp::Application.routes.draw do
 
   # 结束公共资源
 
+  get '/textbox' => 'index#textbox'
+
 end
